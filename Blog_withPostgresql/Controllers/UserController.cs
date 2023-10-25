@@ -28,10 +28,13 @@ namespace Blog_withPostgresql.Controllers
             {
                 connection.Open();
 
-                using (var command = new NpgsqlCommand(sqlExpression, connection))
+                using (var command = new NpgsqlCommand(sqlExpression, connection)) /************************************ так НЕ работает **************************/
                 {
                     command.ExecuteNonQuery();
                 }
+
+                /*****************так работает**************************/
+
                 //using (var command = connection.CreateCommand())
                 //{
                 //    command.CommandText = "INSERT INTO Users (Name, Email, Password) VALUES (@Name, @Email, @Password)";
@@ -46,9 +49,3 @@ namespace Blog_withPostgresql.Controllers
         }
     }
 }
-
-/*
-  "ConnectionStrings": {
-    "Bethlam": "Server=localhost;Username=postgres;Port=5432;Database=Bethlam;UserId=postgres;Password=post1234;"
-  },
- */
