@@ -1,0 +1,10 @@
+﻿@model Blog_withPostgresql.ModelView.UserViewModel
+@{
+    ViewData["Title"] = "Добавление пользователя";
+}
+<form method="post" asp-controller="User" asp-action="AddUser">
+    <input type="text" asp-for="Name"/>
+    <input type="email" asp-for="Email"/>
+    <input type="password" asp-for="Password"/>
+    <button type="submit">Зарегестрировать</button>
+</form>
