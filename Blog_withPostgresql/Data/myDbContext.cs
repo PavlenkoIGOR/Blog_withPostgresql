@@ -1,4 +1,4 @@
-﻿using Blog_withPostgresql.Models;
+﻿using Blog.BLL.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Blog_withPostgresql.Data

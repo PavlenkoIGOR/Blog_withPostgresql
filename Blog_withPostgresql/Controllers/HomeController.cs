@@ -1,4 +1,4 @@
-﻿using Blog_withPostgresql.Models;
+﻿using Blog.BLL.ViewModel;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 

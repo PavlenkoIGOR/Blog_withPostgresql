@@ -1,6 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Blog.BLL.Models;
+using System.ComponentModel.DataAnnotations;
 
-namespace Blog_withPostgresql.Models
+namespace Blog.BLL.Models
 {
     public class User
     {
@@ -13,5 +14,7 @@ namespace Blog_withPostgresql.Models
         public string Email { get; set; }
 
         public string Password { get; set; }
+
+        public List<Post>? posts_id { get; set; } = new();
     }
 }

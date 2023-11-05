@@ -1,4 +1,5 @@
-﻿using Blog_withPostgresql.ModelView;
+﻿using Blog.BLL.ViewModel;
+using Microsoft.Extensions.Configuration;
 using Npgsql;
 
 namespace Blog_withPostgresql.Repositories
@@ -8,15 +9,23 @@ namespace Blog_withPostgresql.Repositories
         public void AddUser(UserViewModel userView);
     }
 
+
+
+
+
+
+
     public class UserRepo : IUserRepo
     {
-        public static IConfiguration _configuration;
-
-        
+        public static IConfiguration _configuration;        
         public UserRepo(IConfiguration configuration)
         {
             _configuration = configuration;
         }
+
+
+
+
 
         public async void AddUser(UserViewModel userView)
         {

@@ -1,19 +1,17 @@
-﻿using Blog_withPostgresql.ModelView;
+﻿using Microsoft.AspNetCore.Mvc;
 using Blog_withPostgresql.Repositories;
-using Microsoft.AspNetCore.Mvc;
+using Blog.BLL.ViewModel;
 
 namespace Blog_withPostgresql.Controllers
 {
     public class UserController : Controller
     {
         IUserRepo _userRepo;
-        /*private IConfiguration _configuration;*/
-        public UserController(/*IConfiguration configuration,*/ IUserRepo userRepo)       
+        public UserController(IUserRepo userRepo)       
         {
-            /*_configuration = configuration;*/
             _userRepo = userRepo;
         }
-
+        #region Adduser
         [HttpGet]
         public IActionResult AddUser() 
         {
@@ -23,9 +21,11 @@ namespace Blog_withPostgresql.Controllers
         public async Task<IActionResult> AddUser(UserViewModel userView)
         {
             _userRepo.AddUser(userView);
-            return RedirectToAction("AddUser", "User");
+            return RedirectToAction("UserBlog", "Blog");
         }
+        #endregion
 
+        #region Login
         [HttpGet]
         public IActionResult AuthUser()
         {
@@ -35,7 +35,8 @@ namespace Blog_withPostgresql.Controllers
         public IActionResult AuthUser(UserViewModel userView)
         {
             
-            return RedirectToAction("UserBlog", "User");
+            return RedirectToAction("UserBlog", "Blog");
         }
+        #endregion
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Blog_withPostgresql.ModelView
+namespace Blog.BLL.ViewModel
 {
     public class UserViewModel
     {

@@ -11,7 +11,7 @@ namespace Blog_withPostgresql
             var builder = WebApplication.CreateBuilder(args);
 
             // Получить экземпляр вашего репозитория IUserRepo
-            builder.Services.AddScoped<IUserRepo, UserRepo>(); //добавлено
+            builder.Services.AddScoped<IUserRepo, UserRepo>(); //добавлено для своих репозиториев
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();

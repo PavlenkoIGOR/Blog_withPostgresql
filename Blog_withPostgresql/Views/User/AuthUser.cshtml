@@ -1,4 +1,4 @@
-﻿@model Blog_withPostgresql.ModelView.UserViewModel
+﻿@model Blog.BLL.ViewModel.UserViewModel
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
     ViewData["Title"] = "Добавление пользователя";
@@ -11,7 +11,7 @@
 <div id="mainDivReg" style="display: flex; justify-content: center; align-items: center; height: 80vh;">
     <div id="divReg">
         <div id="h1Div">
-            <h1>Регистрация</h1>
+            <h1>Аутентификация</h1>
         </div>
         <div id="registerFormDiv">
             <form method="post" asp-controller="User" asp-action="AuthUser">

@@ -1,4 +1,4 @@
-namespace Blog_withPostgresql.Models
+namespace Blog.BLL.ViewModel
 {
     public class ErrorViewModel
     {
