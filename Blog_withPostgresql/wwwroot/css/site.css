@@ -20,3 +20,15 @@ html {
 body {
   margin-bottom: 60px;
 }
+form{
+    display: inline-grid;
+    width: 80%;
+}
+#registerFormDiv {
+    width: 300px;
+    background-color: steelblue;
+    text-align: center;
+}
+#h1Div {
+    text-align: center;
+}
