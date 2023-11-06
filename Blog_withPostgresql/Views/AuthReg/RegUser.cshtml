@@ -11,10 +11,17 @@
 <div id="mainDivReg" style="display: flex; justify-content: center; align-items: center; height: 80vh;">
     <div id="divReg">
         <div id="h1Div">
-            <h1>Аутентификация</h1>
+            <h1>Регистрация</h1>
         </div>
         <div id="registerFormDiv">
-            <form method="post" asp-controller="User" asp-action="AuthUser">
+            <form method="post" asp-controller="AuthReg" asp-action="AddUser">
+                @* <label asp-for="Name"></label> *@
+                <span asp-validation-for="Name" class="text-danger"></span>
+                <input type="text" asp-for="Name" />
+
+                @* <label asp-for="Age"></label> *@
+                <span asp-validation-for="Age" class="text-danger"></span>
+                <input type="number" asp-for="Age" />
 
                 @* <label asp-for="Email"></label> *@
                 <span asp-validation-for="Email" class="text-danger"></span>
@@ -24,10 +31,11 @@
                 <span asp-validation-for="Password" class="text-danger"></span>
                 <input type="password" asp-for="Password" />
 
+                @* <label asp-for="ConfirmPassword"></label> *@
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                <input type="password" asp-for="ConfirmPassword" />
                 <hr />
-
                 <button type="submit">Зарегестрироваться</button>
-
             </form>
         </div>
     </div>

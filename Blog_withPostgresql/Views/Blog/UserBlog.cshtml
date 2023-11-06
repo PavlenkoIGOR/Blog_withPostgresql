@@ -10,7 +10,7 @@
 
 <div style="text-align: -moz-center; text-align: center; border: 2px solid green;">
     <div id="topDivMain" class="divHead">
-        <H1>Страница пользователя @User.Identity.Name</H1>
+        <H1>Страница пользователя @Model.UserName</H1>
     </div>
 
     <div id="bottomDivMain" style="overflow-y: scroll;">
@@ -20,8 +20,8 @@
                 место для фото
             </div>
             <div>
-                <form method="get" asp-controller="User" asp-action="EditUserPage">
-                    <input type="hidden" name="id" value="@Model.Id" />
+                <form method="get" asp-controller="" asp-action="">
+                    <input type="hidden" name="id" value="@Model.UserId" />
                     <button class="AccountButton" type="submit">Редактировать данные профиля</button>
                 </form>
             </div>

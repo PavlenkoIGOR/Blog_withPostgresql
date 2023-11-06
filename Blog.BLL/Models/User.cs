@@ -14,6 +14,7 @@ namespace Blog.BLL.Models
         public string Email { get; set; }
 
         public string Password { get; set; }
+        public string Role { get; set; }
 
         public List<Post>? posts_id { get; set; } = new();
     }

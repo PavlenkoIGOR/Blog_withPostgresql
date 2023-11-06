@@ -5,9 +5,13 @@ namespace Blog.BLL.ViewModel
 {
     public class UserBlogViewModel
     {
-        public string? Id { get; set; }
-        public int PostId { get; set; }
+        public int? UserId { get; set; }
+        public int? PostId { get; set; }
+        public int? UserAge { get; set; }
         public string? Title { get; set; }
+        public string? Email { get; set; }
+        public string? UserName { get; set; }
+        public string? Role { get; set;}
         [DataType(DataType.MultilineText)]
         [Required]
         public string? Text { get; set; }

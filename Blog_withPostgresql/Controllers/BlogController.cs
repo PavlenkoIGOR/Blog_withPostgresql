@@ -1,25 +1,28 @@
 ﻿using Blog.BLL.ViewModel;
+using Blog_withPostgresql.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Blog_withPostgresql.Controllers
 {
     public class BlogController : Controller
     {
-        private IConfiguration _configuration;
-        public BlogController(IConfiguration configuration)       
+        IUserRepo _userRepo;
+        IConfiguration _configuration;
+        public BlogController(IConfiguration configuration, IUserRepo userRepo)       
         {
             _configuration = configuration;
+            _userRepo = userRepo;
         }
         [HttpGet]
-        public IActionResult UserBlog() 
-        {
-            return View();
+        public IActionResult UserBlog(UserBlogViewModel ubVM) 
+        {            
+            return View(ubVM);
         }
         [HttpPost]
-        public IActionResult UserBlog(UserBlogViewModel ubVM)
+        public IActionResult UserBlog()
         {
 
-            return View(ubVM);
+            return View();
         }
     }
 }
