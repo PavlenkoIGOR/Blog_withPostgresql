@@ -71,9 +71,9 @@ namespace Blog_withPostgresql.Repositories
                     {
                         while (reader.Read())
                         {
-                            user.Id = Convert.ToInt32(reader.GetString(0));//id
+                            user.Id = reader.GetInt32(0);//id
                             user.Name = reader.GetString(1);//Name
-                            user.Age = Convert.ToInt32(reader.GetString(2));//Age
+                            user.Age = reader.GetInt32(2);//Age
                             user.Email = reader.GetString(3);//Email
                             user.Password = reader.GetString(4);//Password
                             user.Role = reader.GetString(5);//Role

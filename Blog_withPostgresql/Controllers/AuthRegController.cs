@@ -28,24 +28,22 @@ namespace Blog_withPostgresql.Controllers
 
         #region Login
         [HttpGet]
-        public IActionResult AuthUser(UserViewModel uVM)
+        public IActionResult AuthUser()
         {
-            User user = _userRepo.GetUserByEmail(uVM.Email);
+            return View();
+        }
+        [HttpPost]
+        public IActionResult AuthUser(UserBlogViewModel ubVM)
+        {
+            User user = _userRepo.GetUserByEmail(ubVM.Email);
             UserBlogViewModel blogVM = new UserBlogViewModel()
             {
-                Email = uVM.Email,
+                Email = ubVM.Email,
                 UserId = user.Id,
                 Role = user.Role,
                 UserAge = user.Age,
                 UserName = user.Name
             };
-
-            return View("UserBlog", blogVM);
-        }
-        [HttpPost]
-        public IActionResult AuthUser()
-        {
-
             return RedirectToAction("UserBlog", "Blog");
         }
         #endregion
