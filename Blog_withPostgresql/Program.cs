@@ -1,5 +1,11 @@
 using Blog_withPostgresql.Controllers;
 using Blog_withPostgresql.Repositories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+
+using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
+using System.Text;
 
 namespace Blog_withPostgresql
 {
@@ -12,6 +18,38 @@ namespace Blog_withPostgresql
 
             // Получить экземпляр вашего репозитория IUserRepo
             builder.Services.AddScoped<IUserRepo, UserRepo>(); //****добавлено для своих репозиториев
+
+            //******подключение JWT-токенов
+            builder.Services.AddAuthorization();
+            builder.Services.AddAuthentication("OAuth")
+                .AddJwtBearer("OAuth", config => 
+                {
+
+                });
+
+
+            //builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            //    .AddJwtBearer(options =>
+            //    {
+            //        options.TokenValidationParameters = new TokenValidationParameters
+            //        {
+            //            // указывает, будет ли валидироваться издатель при валидации токена
+            //            ValidateIssuer = true,
+            //            // строка, представляющая издателя
+            //            ValidIssuer = AuthOptions.ISSUER,
+            //            // будет ли валидироваться потребитель токена
+            //            ValidateAudience = true,
+            //            // установка потребителя токена
+            //            ValidAudience = AuthOptions.AUDIENCE,
+            //            // будет ли валидироваться время существования
+            //            ValidateLifetime = true,
+            //            // установка ключа безопасности
+            //            IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(),
+            //            // валидация ключа безопасности
+            //            ValidateIssuerSigningKey = true,
+            //        };
+            //    });
+
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();

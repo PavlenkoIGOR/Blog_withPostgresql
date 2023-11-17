@@ -15,23 +15,23 @@
         </div>
         <div id="registerFormDiv">
             <form method="post" asp-controller="AuthReg" asp-action="AddUser">
-                @* <label asp-for="Name"></label> *@
+                <label asp-for="Name"></label>
                 <span asp-validation-for="Name" class="text-danger"></span>
                 <input type="text" asp-for="Name" />
 
-                @* <label asp-for="Age"></label> *@
+                <label asp-for="Age"></label>
                 <span asp-validation-for="Age" class="text-danger"></span>
                 <input type="number" asp-for="Age" />
 
-                @* <label asp-for="Email"></label> *@
+                <label asp-for="Email"></label>
                 <span asp-validation-for="Email" class="text-danger"></span>
                 <input type="email" asp-for="Email" />
 
-                @* <label asp-for="Password"></label> *@
+                <label asp-for="Password"></label>
                 <span asp-validation-for="Password" class="text-danger"></span>
                 <input type="password" asp-for="Password" />
 
-                @* <label asp-for="ConfirmPassword"></label> *@
+                <label asp-for="ConfirmPassword"></label>
                 <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
                 <input type="password" asp-for="ConfirmPassword" />
                 <hr />
