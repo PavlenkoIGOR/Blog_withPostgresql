@@ -7,8 +7,8 @@ using System.IdentityModel.Tokens.Jwt;
 
 namespace Blog_withPostgresql.Controllers
 {
-    [Route("[controller]")]
-    [ApiController]
+    //[Route("[controller]")]
+    //[ApiController]
     public class AuthRegController : Controller
     {
         IUserRepo _userRepo;
@@ -19,21 +19,25 @@ namespace Blog_withPostgresql.Controllers
 
         #region Adduser
         [HttpGet]
-        [Route("AddUser")]
-        public IActionResult AddUser()
+        //[Route("AddUser")]
+        public IActionResult RegUser()
         {
             return View("RegUser");
         }
         [HttpPost]
-        public async Task<IActionResult> AddUser(UserViewModel userView)
+        public async Task<IActionResult> RegUser(UserViewModel userView)
         {
-            await _userRepo.AddUser(userView);
-            return RedirectToAction("UserBlog", "Blog");
+            if (ModelState.IsValid)
+            {
+                await _userRepo.AddUser(userView);
+                return RedirectToAction("UserBlog", "Blog");
+            }
+            return View(userView);
         }
         #endregion
 
         #region Login
-        [Route("AuthUser")]
+        //[Route("AuthUser")]
         [HttpGet]
         public IActionResult AuthUser()
         {
@@ -63,7 +67,7 @@ namespace Blog_withPostgresql.Controllers
         #endregion
 
         [HttpGet]
-        [Route("EditUser")]
+        //[Route("EditUser")]
         public IActionResult EditUser()
         {
             return View();
