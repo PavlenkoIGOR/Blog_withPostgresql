@@ -2,9 +2,13 @@
 using Blog_withPostgresql.Repositories;
 using Blog.BLL.ViewModel;
 using Blog.BLL.Models;
+using System.Security.Claims;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace Blog_withPostgresql.Controllers
 {
+    //[Route("[controller]")]
+    //[ApiController]
     public class AuthRegController : Controller
     {
         IUserRepo _userRepo;
@@ -12,21 +16,28 @@ namespace Blog_withPostgresql.Controllers
         {
             _userRepo = userRepo;
         }
+
         #region Adduser
         [HttpGet]
-        public IActionResult AddUser()
+        //[Route("AddUser")]
+        public IActionResult RegUser()
         {
             return View("RegUser");
         }
         [HttpPost]
-        public async Task<IActionResult> AddUser(UserViewModel userView)
+        public async Task<IActionResult> RegUser(UserViewModel userView)
         {
-            _userRepo.AddUser(userView);
-            return RedirectToAction("UserBlog", "Blog");
+            if (ModelState.IsValid)
+            {
+                await _userRepo.AddUser(userView);
+                return RedirectToAction("UserBlog", "Blog");
+            }
+            return View(userView);
         }
         #endregion
 
         #region Login
+        //[Route("AuthUser")]
         [HttpGet]
         public IActionResult AuthUser()
         {
@@ -35,6 +46,13 @@ namespace Blog_withPostgresql.Controllers
         [HttpPost]
         public IActionResult AuthUser(UserBlogViewModel ubVM)
         {
+            var claims = new List<Claim>()
+            {
+                new Claim(JwtRegisteredClaimNames.Sub, "Arcadiy"),
+                new Claim(JwtRegisteredClaimNames.Email, "Arc@mail.ru")
+            };
+            var token = new JwtSecurityToken();
+
             User user = _userRepo.GetUserByEmail(ubVM.Email);
             UserBlogViewModel blogVM = new UserBlogViewModel()
             {
@@ -49,6 +67,7 @@ namespace Blog_withPostgresql.Controllers
         #endregion
 
         [HttpGet]
+        //[Route("EditUser")]
         public IActionResult EditUser()
         {
             return View();

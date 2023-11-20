@@ -16,11 +16,11 @@
         <div id="registerFormDiv">
             <form method="post" asp-controller="AuthReg" asp-action="AuthUser">
 
-                @* <label asp-for="Email"></label> *@
+                <label asp-for="Email"></label>
                 <span asp-validation-for="Email" class="text-danger"></span>
                 <input type="email" asp-for="Email" />
 
-                @* <label asp-for="Password"></label> *@
+                <label asp-for="Password"></label>
                 <span asp-validation-for="Password" class="text-danger"></span>
                 <input type="password" asp-for="Password" />
 
