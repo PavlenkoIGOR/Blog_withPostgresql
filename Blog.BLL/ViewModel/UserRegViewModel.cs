@@ -2,7 +2,7 @@
 
 namespace Blog.BLL.ViewModel
 {
-    public class UserViewModel
+    public class UserRegViewModel
     {
         [DataType(DataType.Text)]
         [Required(ErrorMessage = "Поле обязательно для заполнения")]

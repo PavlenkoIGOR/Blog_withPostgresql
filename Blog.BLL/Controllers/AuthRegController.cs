@@ -4,6 +4,7 @@ using Blog.BLL.ViewModel;
 using Blog.BLL.Models;
 using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Blog_withPostgresql.Controllers
 {
@@ -19,13 +20,13 @@ namespace Blog_withPostgresql.Controllers
 
         #region Adduser
         [HttpGet]
-        //[Route("AddUser")]
+        //[Route("RegUser")]
         public IActionResult RegUser()
         {
             return View("RegUser");
         }
         [HttpPost]
-        public async Task<IActionResult> RegUser(UserViewModel userView)
+        public async Task<IActionResult> RegUser(UserRegViewModel userView)
         {
             if (ModelState.IsValid)
             {
@@ -44,25 +45,33 @@ namespace Blog_withPostgresql.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult AuthUser(UserBlogViewModel ubVM)
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public IActionResult AuthUser(UserAuthViewModel ubVM)
         {
-            var claims = new List<Claim>()
+            if (ModelState.IsValid)
             {
-                new Claim(JwtRegisteredClaimNames.Sub, "Arcadiy"),
-                new Claim(JwtRegisteredClaimNames.Email, "Arc@mail.ru")
-            };
-            var token = new JwtSecurityToken();
-
-            User user = _userRepo.GetUserByEmail(ubVM.Email);
-            UserBlogViewModel blogVM = new UserBlogViewModel()
-            {
-                Email = ubVM.Email,
-                UserId = user.Id,
-                Role = user.Role,
-                UserAge = user.Age,
-                UserName = user.Name
-            };
-            return RedirectToAction("UserBlog", "Blog");
+                User userE = _userRepo.GetUserByEmail(ubVM.Email);
+                User userP = _userRepo.GetUserByPassword(ubVM.Password);
+                if (userP?.Password != ubVM.Password)
+                {
+                    ViewData["InvalidPassword"] = "Неправильный пароль";
+                    return View(ubVM);
+                }
+                else
+                {
+                    UserBlogViewModel blogVM = new UserBlogViewModel()
+                    {
+                        Email = ubVM.Email,
+                        UserId = userE.Id,
+                        Role = userE.Role,
+                        UserAge = userE.Age,
+                        UserName = userE.Name
+                    };
+                    return View("GreetingPage", blogVM);
+                }
+            }
+            return View();
         }
         #endregion
 
@@ -74,3 +83,12 @@ namespace Blog_withPostgresql.Controllers
         }
     }
 }
+
+
+
+/*                    var claims = new List<Claim>()
+                {
+                    new Claim(JwtRegisteredClaimNames.Sub, "Arcadiy"),
+                    new Claim(JwtRegisteredClaimNames.Email, "Arc@mail.ru")
+                };
+                    var token = new JwtSecurityToken();*/

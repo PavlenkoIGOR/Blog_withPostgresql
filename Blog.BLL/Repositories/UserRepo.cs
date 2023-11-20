@@ -9,8 +9,9 @@ namespace Blog_withPostgresql.Repositories
 {
     public interface IUserRepo
     {
-        public Task AddUser(UserViewModel userView);
+        public Task AddUser(UserRegViewModel userView);
         public User GetUserByEmail(string email);
+        public User GetUserByPassword(string password);
     }
 
 
@@ -32,7 +33,7 @@ namespace Blog_withPostgresql.Repositories
 
 
 
-        public async Task AddUser(UserViewModel userView)
+        public async Task AddUser(UserRegViewModel userView)
         {
             string connectionString = _configuration.GetConnectionString("Bethlem"); /* = "Server=localhost;Username=postgres;Port=5432;Database=Bethlem;UserId=postgres;Password=postg1234;";*/
             using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
@@ -67,6 +68,34 @@ namespace Blog_withPostgresql.Repositories
                 using (NpgsqlCommand command = new NpgsqlCommand(selectUserByEmail, connection))
                 {
                     command.Parameters.AddWithValue("@email", email);
+                    using (NpgsqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            user.Id = reader.GetInt32(0);//id
+                            user.Name = reader.GetString(1);//Name
+                            user.Age = reader.GetInt32(2);//Age
+                            user.Email = reader.GetString(3);//Email
+                            user.Password = reader.GetString(4);//Password
+                            user.Role = reader.GetString(5);//Role
+                        }
+                    }
+                }
+                connection.Close();
+            }
+            return user;
+        }
+        public User GetUserByPassword(string password)
+        {
+            string connectionString = _configuration.GetConnectionString("Bethlem"); /* = "Server=localhost;Username=postgres;Port=5432;Database=Bethlem;UserId=postgres;Password=postg1234;";*/
+            User user = new User();
+            using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+            {
+                connection.Open();
+                string selectUserByEmail = "select * from users where password = @password";
+                using (NpgsqlCommand command = new NpgsqlCommand(selectUserByEmail, connection))
+                {
+                    command.Parameters.AddWithValue("@password", password);
                     using (NpgsqlDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())

@@ -1,6 +1,7 @@
 ﻿using Blog.BLL.ViewModel;
 using Blog_withPostgresql.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 
 namespace Blog_withPostgresql.Controllers
 {

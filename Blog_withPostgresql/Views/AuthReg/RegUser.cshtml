@@ -1,4 +1,4 @@
-﻿@model Blog.BLL.ViewModel.UserViewModel
+﻿@model Blog.BLL.ViewModel.UserRegViewModel
 
 @{
     ViewData["Title"] = "Добавление пользователя";
@@ -8,34 +8,27 @@
 <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.17.0/jquery.validate.min.js"></script>
 <script src="https://ajax.aspnetcdn.com/ajax/jquery.validation.unobtrusive/3.2.10/jquery.validate.unobtrusive.min.js"></script>*@
 
-@* <div id="mainDivReg" style="display: flex; justify-content: center; align-items: center; height: 80vh;">
+<div id="mainDivReg" style="display: flex; justify-content: center; align-items: center; height: 80vh;">
     <div id="divReg">
         <div id="h1Div">
             <h1>Регистрация</h1>
         </div>
         <div id="registerFormDiv">
-            <form method="post" asp-controller="AuthReg" asp-action="AddUser">
+            <form method="post" asp-controller="AuthReg" asp-action="RegUser">
 
-                <div id="nameMainInputDiv" style="position:relative; display:inline-flex;">
+                <div>
                     <div id="labelDiv">
-                        <label class="editor-label" asp-for="Name"></label>
+                        @Html.LabelFor(model => model.Name)
                     </div>
                     <div id="span_InputDiv">
-                        <input type="text" asp-for="Name" />
-                        <span asp-validation-for="Name" class="text-danger"></span>
+                        @Html.EditorFor(model => model.Name)
+                        @Html.ValidationMessageFor(model => model.Name)
                     </div>
                 </div>
-@*                 <div class="editor-label">
-                    @Html.LabelFor(model => model.Name)
-                </div>
-                <div class="editor-field">
-                    @Html.EditorFor(model => model.Name)
-                    @Html.ValidationMessageFor(model => model.Name)
-                </div> *@
 
-@*                 <div id="ageMainInputDiv" style="position:relative; display:inline-flex;">
+                <div id="ageMainInputDiv" style="position:relative; display:inline-flex;">
                     <div id="labelDiv">
-                        <label class="editor-label" asp-for="Age"></label>
+                        <label asp-for="Age"></label>
                     </div>
                     <div id="span_InputDiv">
                         <input type="number" asp-for="Age" />
@@ -71,61 +64,6 @@
                         <input type="password" asp-for="ConfirmPassword" />
                         <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
                     </div>
-                </div>
-
-                <hr />
-                <button type="submit">Зарегестрироваться</button>
-            </form>
-        </div>
-    </div>
-</div> *@
-
-<div id="mainDivReg" style="display: flex; justify-content: center; align-items: center; height: 80vh;">
-    <div id="divReg">
-        <div id="h1Div">
-            <h1>Регистрация</h1>
-        </div>
-        <div id="registerFormDiv">
-            <form method="post" asp-controller="AuthReg" asp-action="RegUser">
-
-                <div id="nameMainInputDiv" style="position:relative; display:inline-flex;">
-
-                    <label asp-for="@Model.Name"></label>
-
-                    <input asp-for="@Model.Name" />
-                    <span asp-validation-for="@Model.Name" class="text-danger"></span>
-
-                </div>
-                @*                 <div class="editor-label">
-                @Html.LabelFor(model => model.Name)
-                </div>
-                <div class="editor-field">
-                @Html.EditorFor(model => model.Name)
-                @Html.ValidationMessageFor(model => model.Name)
-                </div> *@
-
-                <div id="ageMainInputDiv" style="position:relative; display:inline-flex;">
-                    <label asp-for="@Model.Age"></label>
-                    <input asp-for="@Model.Age" />
-                    <span asp-validation-for="@Model.Age" class="text-danger"></span>
-                </div>
-
-                <div id="emailMainInputDiv" style="position:relative; display:inline-flex;">
-                    <label asp-for="@Model.Email"></label>
-                    <input asp-for="@Model.Email" />
-                    <span asp-validation-for="@Model.Email" class="text-danger"></span>
-                </div>
-
-                <div id="passw_MainInputDiv" style="position:relative; display:inline-flex;">
-                    <label asp-for="@Model.Password"></label>
-                    <input asp-for="@Model.Password" />
-                    <span asp-validation-for="@Model.Password" class="text-danger"></span>
-                </div>
-
-                <div id="confirmpassw_MainInputDiv" style="position:relative; display:inline-flex;">
-                    <label asp-for="@Model.ConfirmPassword"></label>
-                    <input asp-for="@Model.ConfirmPassword" />
-                    <span asp-validation-for="@Model.ConfirmPassword" class="text-danger"></span>
                 </div>
 
                 <hr />
