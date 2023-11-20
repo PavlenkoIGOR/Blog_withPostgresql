@@ -5,6 +5,7 @@ create table users
 	id serial primary key not null,
 	name varchar(120) not null,
 	age integer not null,
+	role varchar(20) not null,
 	email varchar(120) not null unique,
 	password varchar(1200) not null
 )
@@ -13,9 +14,9 @@ create table users
 create table posts
 (
 	id serial PRIMARY key not null,
-	"postTitle" varchar(250) not null,
-	"postText" varchar(8000) not null,
-	user_id INTEGER REFERENCES users (id)
+	postTitle varchar(250) not null,
+	postText varchar(8000) not null,
+	user_id int references users (id) on delete cascade
 )
 */
 /*
@@ -42,9 +43,8 @@ teg_id INTEGER REFERENCES tegs (id) ON DELETE CASCADE,
 PRIMARY KEY (post_id, teg_id)
 );
 */
-
 /*
-create table "UserIdPostId"
+create table userIDpostID
 (
 	"UserId" integer references users (id) ON DELETE CASCADE,
 	"PostId" integer,
@@ -54,7 +54,7 @@ create table "UserIdPostId"
 */
 /*
 ALTER TABLE Users
-ALTER COLUMN Age INTEGER set not null
+ALTER COLUMN Age int set not null
 */
 /*
 create table roles
