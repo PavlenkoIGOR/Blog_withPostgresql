@@ -1,10 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Blog_withPostgresql.Repositories;
+﻿using Blog_withPostgresql.Repositories;
 using Blog.BLL.ViewModel;
 using Blog.BLL.Models;
-using System.Security.Claims;
-using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
 
 namespace Blog_withPostgresql.Controllers
 {
@@ -47,15 +47,21 @@ namespace Blog_withPostgresql.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public IActionResult AuthUser(UserAuthViewModel ubVM)
+        public async Task<IActionResult> AuthUser(UserAuthViewModel ubVM)
         {
             if (ModelState.IsValid)
             {
-                User userE = _userRepo.GetUserByEmail(ubVM.Email);
-                User userP = _userRepo.GetUserByPassword(ubVM.Password);
-                if (userP?.Password != ubVM.Password)
+                User userE = await _userRepo.GetUserByEmail(ubVM.Email);
+                User userP = await _userRepo.GetUserByPassword(PasswordHash.HashPassword(ubVM.Password));
+
+                if ((userE?.Email != ubVM.Email) & (userP?.Password == PasswordHash.HashPassword(ubVM.Password)))
                 {
                     ViewData["InvalidPassword"] = "Неправильный пароль";
+                    return View(ubVM);
+                }
+                else if ((userE?.Email == ubVM.Email) & (userP?.Password != PasswordHash.HashPassword(ubVM.Password)))
+                {
+                    ViewData["InvalidPassword"] = "Неправильный адрес почты";
                     return View(ubVM);
                 }
                 else
@@ -68,7 +74,25 @@ namespace Blog_withPostgresql.Controllers
                         UserAge = userE.Age,
                         UserName = userE.Name
                     };
+                    var claims = new List<Claim>() 
+                    {
+                        new Claim(ClaimsIdentity.DefaultNameClaimType, blogVM.UserName),
+                        new Claim(ClaimsIdentity.DefaultRoleClaimType, blogVM.Role)
+                    };
+
+                    // создаем объект ClaimsIdentity
+                    ClaimsIdentity id = new ClaimsIdentity
+                        (
+                        claims,
+                        "BlogApplication_Cookie",
+                        ClaimsIdentity.DefaultNameClaimType,
+                        ClaimsIdentity.DefaultRoleClaimType
+                        );
+                    // установка аутентификационных куки
+                    await HttpContext.SignInAsync("BlogApplication_Cookie", new ClaimsPrincipal(id));
+
                     return View("GreetingPage", blogVM);
+                    
                 }
             }
             return View();
@@ -86,9 +110,11 @@ namespace Blog_withPostgresql.Controllers
 
 
 
-/*                    var claims = new List<Claim>()
+/*
+ var claims = new List<Claim>()
                 {
                     new Claim(JwtRegisteredClaimNames.Sub, "Arcadiy"),
                     new Claim(JwtRegisteredClaimNames.Email, "Arc@mail.ru")
                 };
-                    var token = new JwtSecurityToken();*/
+                    var token = new JwtSecurityToken();
+*/

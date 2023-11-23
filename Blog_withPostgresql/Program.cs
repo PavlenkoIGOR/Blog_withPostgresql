@@ -1,11 +1,4 @@
-using Blog_withPostgresql.Controllers;
 using Blog_withPostgresql.Repositories;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
-
-using Microsoft.IdentityModel.Tokens;
-using System.Security.Claims;
-using System.Text;
 
 namespace Blog_withPostgresql
 {
@@ -21,12 +14,12 @@ namespace Blog_withPostgresql
 
             //******подключение JWT-токенов
             builder.Services.AddAuthorization();
-            builder.Services.AddAuthentication("OAuth")
-                .AddJwtBearer("OAuth", config => 
-                {
+            //builder.Services.AddAuthentication("OAuth")
+            //    .AddJwtBearer("OAuth", config =>
+            //    {
 
-                });
-
+            //    });
+            builder.Services.AddAuthentication().AddCookie("BlogApplication_Cookie");
 
             //builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             //    .AddJwtBearer(options =>

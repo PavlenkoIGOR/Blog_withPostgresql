@@ -10,8 +10,8 @@ namespace Blog_withPostgresql.Repositories
     public interface IUserRepo
     {
         public Task AddUser(UserRegViewModel userView);
-        public User GetUserByEmail(string email);
-        public User GetUserByPassword(string password);
+        public Task<User> GetUserByEmail(string email);
+        public Task<User> GetUserByPassword(string password);
     }
 
 
@@ -45,7 +45,7 @@ namespace Blog_withPostgresql.Repositories
                 //}
                 using (var command = connection.CreateCommand())
                 {
-                    command.CommandText = "INSERT INTO Users (name, age, email, password, role) VALUES (@name, @age, @email, @password, @role)";
+                    command.CommandText = "INSERT INTO Users (name, age, role, email, password) VALUES (@name, @age, @role, @email, @password)";
                     command.Parameters.AddWithValue("@name", userView.Name);
                     command.Parameters.AddWithValue("@email", userView.Email);
                     command.Parameters.AddWithValue("@password", PasswordHash.HashPassword(userView.Password));
@@ -57,7 +57,7 @@ namespace Blog_withPostgresql.Repositories
             }
         }
 
-        public User GetUserByEmail(string email)
+        public async Task<User> GetUserByEmail(string email)
         {
             string connectionString = _configuration.GetConnectionString("Bethlem"); /* = "Server=localhost;Username=postgres;Port=5432;Database=Bethlem;UserId=postgres;Password=postg1234;";*/
             User user = new User();
@@ -75,17 +75,18 @@ namespace Blog_withPostgresql.Repositories
                             user.Id = reader.GetInt32(0);//id
                             user.Name = reader.GetString(1);//Name
                             user.Age = reader.GetInt32(2);//Age
-                            user.Email = reader.GetString(3);//Email
-                            user.Password = reader.GetString(4);//Password
-                            user.Role = reader.GetString(5);//Role
+                            user.Role = reader.GetString(3);//Password
+                            user.Email = reader.GetString(4);//Password
+                            user.Password = reader.GetString(5);//Role
                         }
+                        reader.Close();
                     }
                 }
                 connection.Close();
             }
             return user;
         }
-        public User GetUserByPassword(string password)
+        public async Task<User> GetUserByPassword(string password)
         {
             string connectionString = _configuration.GetConnectionString("Bethlem"); /* = "Server=localhost;Username=postgres;Port=5432;Database=Bethlem;UserId=postgres;Password=postg1234;";*/
             User user = new User();
@@ -103,10 +104,11 @@ namespace Blog_withPostgresql.Repositories
                             user.Id = reader.GetInt32(0);//id
                             user.Name = reader.GetString(1);//Name
                             user.Age = reader.GetInt32(2);//Age
-                            user.Email = reader.GetString(3);//Email
-                            user.Password = reader.GetString(4);//Password
-                            user.Role = reader.GetString(5);//Role
+                            user.Role = reader.GetString(3);//Role
+                            user.Email = reader.GetString(4);//Email
+                            user.Password = reader.GetString(5);//Password                            
                         }
+                        reader.Close();
                     }
                 }
                 connection.Close();
