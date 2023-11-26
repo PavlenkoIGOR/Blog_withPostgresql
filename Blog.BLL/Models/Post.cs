@@ -11,7 +11,8 @@ namespace Blog.BLL.Models
         public int Id { get; set; }
         public string postTitle { get; set; }
         public string postText { get; set; }
-        public int user_id { get; set; }
-        public List<Teg> Tegs { get; set; } = new();
+        public DateTime PublicationDate { get; set; }
+        public int UserId { get; set; }
+
     }
 }

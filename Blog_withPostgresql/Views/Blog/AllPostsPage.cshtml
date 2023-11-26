@@ -1,0 +1,75 @@
+﻿@model IEnumerable<Blog.BLL.ViewModels.AllPostsViewModel>
+@using Blog.BLL.ViewModels;
+@using Blog.BLL.Models;
+@{
+    ViewData["Title"] = "Все посты";
+    ViewBag.Title = "AllPostsPage"; //добавляет Hash из контроллера AllPostsPage для вывода всех Teg
+    int i = 1;
+}
+
+@if (Model == null)
+{
+    <h1>Пока пусто!</h1>
+}
+else
+{
+    <form>
+        <div>
+            <input id="searchPostsByTeg" value="Поиск по тегу" />
+            <input id="searchPostsByTegButton" type="submit" value="Найти" />
+        </div>
+    </form>
+    <div style="background-color: rgba(0,0,0,0.5);">
+        @foreach (var item in ViewBag.List)
+        {
+            <div style="color:orange; display:inline-flex;">
+                <a asp-controller="Blog" asp-action="ShowPostsByTeg" asp-route-tegTitle="@item">@item</a>
+                @{
+                    i++;
+                }
+            </div>
+        }
+    </div>
+    <div style="height: 80vh; margin: 0 auto; overflow-y: auto;">
+        @{
+            foreach (var post in Model)
+            {
+                <div id="postBlock" style="cursor:pointer;">
+                    <div>
+                        @Html.DisplayFor(p => post.Title)
+                    </div>
+                    <div id="textBlock">
+                        @Html.DisplayFor(p => post.Text)
+                    </div>
+                    <div>
+                        Дата публикации: @Html.DisplayFor(p => post.PublicationTime)
+                    </div>
+                    <div>
+                        Автор: @Html.DisplayFor(p => post.Author)
+                    </div>
+
+                    <div style="text-align: right;">
+                    </div>
+                    <div class="buttonsLine">
+                        <a class="AccountButton" style="text-decoration:none; border: 2px, solid, rgba(57,227,237,1);" href="@Url.Action("PostDiscussion", "Posts", new {id = post.Id})">Перейти к обсуждению</a>
+                        @if (User.IsInRole("Administrator") || User.IsInRole("Moderator"))
+                        {
+                            <form method="get" asp-controller="Posts" asp-action="EditPost">
+                                <input type="hidden" name="postId" value="@post.Id" />
+                                <button class="AccountButton" type="submit">Редактировать статью</button>
+                            </form>
+                        }
+                        @if (User.IsInRole("Administrator"))
+                        {
+                            <form method="post" asp-controller="Posts" asp-action="DeletePostByAdmin">
+                                <input type="hidden" name="postId" value="@post.Id" />
+                                <button class="AccountButton" type="submit">Удалить статью</button>
+                            </form>
+                        }
+                    </div>
+                </div>
+            }
+        }
+
+    </div>
+}

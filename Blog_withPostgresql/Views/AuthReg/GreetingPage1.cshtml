@@ -1,4 +1,4 @@
-﻿@model Blog.BLL.ViewModel.UserBlogViewModel
+﻿@model Blog.BLL.ViewModels.UserBlogViewModel
 @using System.Security.Claims;
 @{
     
@@ -57,5 +57,5 @@
 
         // Использовать данные из Claim на странице        
     }
-    <h2>Ваша роль: @ClaimRole</h2>
+    <h2>Вы зашли под ролью: @Model.Role</h2>
 </div>

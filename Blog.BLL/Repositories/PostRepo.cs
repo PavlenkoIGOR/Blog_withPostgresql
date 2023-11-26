@@ -1,15 +1,14 @@
 ﻿using Blog.BLL.Models;
+
 using Blog.BLL.ViewModels;
 using Microsoft.Extensions.Configuration;
 using Npgsql;
-using System.Security;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Blog_withPostgresql.Repositories
 {
-    public interface IUserRepo
+    public interface IPostRepo
     {
-        public Task AddUser(UserRegViewModel userView);
+        public Task AddPost(Post post);
         public User GetUserByEmail(string email);
         public User GetUserByPassword(string password);
         public User GetUserById(int id);
@@ -22,11 +21,11 @@ namespace Blog_withPostgresql.Repositories
 
 
 
-    public class UserRepo : IUserRepo
+    public class PostRepo : IPostRepo
     {
         public static IConfiguration _configuration;
         string connectionString = _configuration.GetConnectionString("Bethlem"); /* = "Server=localhost;Username=postgres;Port=5432;Database=Bethlem;UserId=postgres;Password=postg1234;";*/
-        public UserRepo(IConfiguration configuration)
+        public PostRepo(IConfiguration configuration)
         {
             _configuration = configuration;
         }
@@ -35,7 +34,7 @@ namespace Blog_withPostgresql.Repositories
 
 
 
-        public async Task AddUser(UserRegViewModel userView)
+        public async Task AddPost(Post post)
         {
             string connectionString = _configuration.GetConnectionString("Bethlem"); /* = "Server=localhost;Username=postgres;Port=5432;Database=Bethlem;UserId=postgres;Password=postg1234;";*/
             using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
@@ -47,12 +46,11 @@ namespace Blog_withPostgresql.Repositories
                 //}
                 using (var command = connection.CreateCommand())
                 {
-                    command.CommandText = "INSERT INTO Users (name, age, role, email, password) VALUES (@name, @age, @role, @email, @password)";
-                    command.Parameters.AddWithValue("@name", userView.Name);
-                    command.Parameters.AddWithValue("@email", userView.Email);
-                    command.Parameters.AddWithValue("@password", PasswordHash.HashPassword(userView.Password));
-                    command.Parameters.AddWithValue("@age", userView.Age);
-                    command.Parameters.AddWithValue("@role", "user");
+                    command.CommandText = "INSERT INTO posts (postTitle, postText, user_id, publicationdate) VALUES (@postTitle, @postText, @user_id, @publicationdate)";
+                    command.Parameters.AddWithValue("@postTitle", post.postTitle);
+                    command.Parameters.AddWithValue("@postText", post.postText);
+                    command.Parameters.AddWithValue("@user_id", post.UserId);
+                    command.Parameters.AddWithValue("@publicationdate", post.PublicationDate);
                     command.ExecuteNonQuery();
                 }
                 connection.CloseAsync().Wait();

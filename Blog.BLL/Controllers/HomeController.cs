@@ -1,22 +1,48 @@
-﻿using Blog.BLL.ViewModel;
+﻿using Blog.BLL.Models;
+using Blog.BLL.ViewModel;
+using Blog.BLL.ViewModels;
+using Blog_withPostgresql.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
+using System.Security.Claims;
 
 namespace Blog_withPostgresql.Controllers
 {
-	public class HomeController : Controller
+    public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly IUserRepo _userRepo;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, IUserRepo userRepo)
         {
             _logger = logger;
+            _userRepo = userRepo;
         }
 
         public IActionResult Index()
         {
-            return View();
+            if (HttpContext.User.Identity.IsAuthenticated)
+            {
+                var currentUser = HttpContext.User;
+                var userId = currentUser.FindFirstValue(ClaimTypes.NameIdentifier); //представляет идентификатор пользователя.
+
+                User user = _userRepo.GetUserByEmail(currentUser.Identity.Name);
+                UserBlogViewModel blogVM = new UserBlogViewModel()
+                {
+                    Email = user.Email,
+                    UserId = user.Id,
+                    Role = user.Role,
+                    UserAge = user.Age,
+                    UserName = user.Name
+                };
+                return View("GreetingPage", blogVM);
+            }
+            else
+            {
+                return View();
+            }
         }
 
         public IActionResult Privacy()

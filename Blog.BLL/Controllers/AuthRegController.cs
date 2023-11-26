@@ -5,6 +5,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
+using System.Text;
+using System.IdentityModel.Tokens.Jwt;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Blog.BLL.ViewModels;
 
 namespace Blog_withPostgresql.Controllers
 {
@@ -13,9 +19,13 @@ namespace Blog_withPostgresql.Controllers
     public class AuthRegController : Controller
     {
         IUserRepo _userRepo;
-        public AuthRegController(IUserRepo userRepo)
+        private readonly ILogger<AuthRegController> _logger;
+
+
+        public AuthRegController(IUserRepo userRepo, ILogger<AuthRegController> logger)
         {
             _userRepo = userRepo;
+            _logger = logger;
         }
 
         #region Adduser
@@ -51,70 +61,107 @@ namespace Blog_withPostgresql.Controllers
         {
             if (ModelState.IsValid)
             {
-                User userE = await _userRepo.GetUserByEmail(ubVM.Email);
-                User userP = await _userRepo.GetUserByPassword(PasswordHash.HashPassword(ubVM.Password));
+                User userE = _userRepo.GetUserByEmail(ubVM.Email);
+                User userP = _userRepo.GetUserByPassword(PasswordHash.HashPassword(ubVM.Password));
 
                 if ((userE?.Email != ubVM.Email) & (userP?.Password == PasswordHash.HashPassword(ubVM.Password)))
-                {
-                    ViewData["InvalidPassword"] = "Неправильный пароль";
-                    return View(ubVM);
-                }
-                else if ((userE?.Email == ubVM.Email) & (userP?.Password != PasswordHash.HashPassword(ubVM.Password)))
                 {
                     ViewData["InvalidPassword"] = "Неправильный адрес почты";
                     return View(ubVM);
                 }
-                else
+                if ((userE?.Email == ubVM.Email) & (userP?.Password != PasswordHash.HashPassword(ubVM.Password)))
                 {
-                    UserBlogViewModel blogVM = new UserBlogViewModel()
-                    {
-                        Email = ubVM.Email,
-                        UserId = userE.Id,
-                        Role = userE.Role,
-                        UserAge = userE.Age,
-                        UserName = userE.Name
-                    };
-                    var claims = new List<Claim>() 
-                    {
-                        new Claim(ClaimsIdentity.DefaultNameClaimType, blogVM.UserName),
-                        new Claim(ClaimsIdentity.DefaultRoleClaimType, blogVM.Role)
-                    };
-
-                    // создаем объект ClaimsIdentity
-                    ClaimsIdentity id = new ClaimsIdentity
-                        (
-                        claims,
-                        "BlogApplication_Cookie",
-                        ClaimsIdentity.DefaultNameClaimType,
-                        ClaimsIdentity.DefaultRoleClaimType
-                        );
-                    // установка аутентификационных куки
-                    await HttpContext.SignInAsync("BlogApplication_Cookie", new ClaimsPrincipal(id));
-
-                    return View("GreetingPage", blogVM);
-                    
+                    ViewData["InvalidPassword"] = "Неправильный пароль";
+                    return View(ubVM);
                 }
+
+                UserBlogViewModel blogVM = new UserBlogViewModel()
+                {
+                    Email = ubVM.Email,
+                    UserId = userE.Id,
+                    Role = userE.Role,
+                    UserAge = userE.Age,
+                    UserName = userE.Name
+                };
+                await Authenticate(userE.Email); // аутентификация
+
+                                                 //var claims = new List<Claim>()
+                                                 //{
+                                                 //    new Claim(ClaimsIdentity.DefaultNameClaimType, blogVM.UserName),
+                                                 //    new Claim(ClaimsIdentity.DefaultRoleClaimType, blogVM.Role)
+                                                 //};
+                                                 //// создаем объект ClaimsIdentity
+                                                 //ClaimsIdentity claimId = new ClaimsIdentity
+                                                 //    (
+                                                 //    claims,
+                                                 //    "BlogApplication_Cookie",
+                                                 //    ClaimsIdentity.DefaultNameClaimType,
+                                                 //    ClaimsIdentity.DefaultRoleClaimType
+                                                 //    );
+                                                 ////_logger.LogInformation("Nen fdsfds {@user}", blogVM);
+                                                 ////var cl = GenerationTokenStation(blogVM.UserId);
+                                                 //// установка аутентификационных куки
+                                                 //await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimId));
+                                                 ////await HttpContext.SignInAsync("BlogApplication_Cookie", new ClaimsPrincipal(id));
+                return View("GreetingPage1", blogVM);
+
             }
             return View();
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return RedirectToAction("Index", "Home");
+        }
+
+
+
+
+        public string GenerationTokenStation(int userId)
+        {
+            var key = "Тут ключ для подписи";
+
+            var claims = new List<Claim> { new Claim("UserId", userId.ToString()) };
+            var jwt = new JwtSecurityToken(
+                    issuer: "Кто выдал токен",
+                    audience: "Для кого выдан",
+                    claims: claims,
+                    expires: DateTime.UtcNow.AddSeconds(60),
+                    signingCredentials: new SigningCredentials(new SymmetricSecurityKey(Encoding.ASCII.GetBytes(key)), SecurityAlgorithms.HmacSha256));
+
+            var tokenHandler = new JwtSecurityTokenHandler().WriteToken(jwt);
+            return tokenHandler.ToString();
+        }
         #endregion
 
+        //[Authorize]
         [HttpGet]
         //[Route("EditUser")]
         public IActionResult EditUser()
         {
             return View();
         }
+
+
+
+
+
+
+        private async Task Authenticate(string userMail)
+        {
+            User user = _userRepo.GetUserByEmail(userMail);
+            // создаем один claim
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimsIdentity.DefaultNameClaimType, user.Email),
+                new Claim(ClaimsIdentity.DefaultNameClaimType, user.Role),
+            };
+            // создаем объект ClaimsIdentity
+            ClaimsIdentity id = new ClaimsIdentity(claims, "BlogApplication_Cookie", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
+            // установка аутентификационных куки
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(id));
+        }
     }
 }
-
-
-
-/*
- var claims = new List<Claim>()
-                {
-                    new Claim(JwtRegisteredClaimNames.Sub, "Arcadiy"),
-                    new Claim(JwtRegisteredClaimNames.Email, "Arc@mail.ru")
-                };
-                    var token = new JwtSecurityToken();
-*/

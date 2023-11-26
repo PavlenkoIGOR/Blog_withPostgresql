@@ -1,0 +1,33 @@
+﻿
+
+
+@* @{
+    ViewData["Title"] = "Редактирование статьи";
+}
+@if (User.IsInRole("Administrator") || User.IsInRole("Moderator"))
+{
+    <div id="PostField" style="background-color: steelblue">
+        <form method="get" asp-controller="Posts" asp-action="EditPostByAdminModer">
+            @Html.TextAreaFor(m => m.Title, new { @class = "userPostsTextArea" })
+            @Html.TextAreaFor(m => m.Text, new { @class = "userPostsTextArea" })
+            <span style="color:bisque">Введите незвание тегов через запятую в формате "#Название тега"</span>
+            @Html.TextAreaFor(m => m.tegs, new { @class = "userPostsTextArea", Value = "Начальное значение" })
+            <input type="hidden" name="PostId" value="@Model.PostId" />
+            <button class="AccountButton" type="submit">Сохранить (администратор/модератор)</button>
+        </form>
+    </div>
+}
+else
+{
+    <div id="PostField" style="background-color: steelblue">
+        <form method="post" asp-controller="Posts" asp-action="EditPost">
+            @Html.TextAreaFor(m => m.Title, new { @class = "userPostsTextArea" })
+            @Html.TextAreaFor(m => m.Text, new { @class = "userPostsTextArea" })
+            <span style="color:bisque">Введите незвание тегов через запятую в формате "#Название тега"</span>
+            @Html.TextAreaFor(m => m.tegs, new { @class = "userPostsTextArea", Value = "Начальное значение" })
+            <input type="hidden" name="PostId" value="@Model.PostId" />
+            <input type="hidden" name="Id" value="@Model.Id" />
+            <button class="AccountButton" type="submit">Сохранить</button>
+        </form>
+    </div>
+} *@
