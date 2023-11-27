@@ -11,6 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Blog.BLL.ViewModels;
+using Microsoft.AspNetCore.Http;
 
 namespace Blog_withPostgresql.Controllers
 {
@@ -41,7 +42,8 @@ namespace Blog_withPostgresql.Controllers
             if (ModelState.IsValid)
             {
                 await _userRepo.AddUser(userView);
-                return RedirectToAction("UserBlog", "Blog");
+                await Authenticate(userView.Email);
+                return RedirectToAction("UserBlog", "Posts");
             }
             return View(userView);
         }
@@ -74,39 +76,47 @@ namespace Blog_withPostgresql.Controllers
                     ViewData["InvalidPassword"] = "Неправильный пароль";
                     return View(ubVM);
                 }
-
-                UserBlogViewModel blogVM = new UserBlogViewModel()
+                if ((userE?.Email != ubVM.Email) & (userP?.Password != PasswordHash.HashPassword(ubVM.Password)))
                 {
-                    Email = ubVM.Email,
-                    UserId = userE.Id,
-                    Role = userE.Role,
-                    UserAge = userE.Age,
-                    UserName = userE.Name
-                };
-                await Authenticate(userE.Email); // аутентификация
+                    ViewData["InvalidPassword"] = "Неправильный пароль и/или логин";
+                    return View(ubVM);
+                }
+                    UserBlogViewModel blogVM = new UserBlogViewModel()
+                    {
+                        Email = ubVM.Email,
+                        UserId = userE.Id,
+                        Role = userE.Role,
+                        UserAge = userE.Age,
+                        UserName = userE.Name
+                    };
+                    await Authenticate(userE.Email); // аутентификация
 
-                                                 //var claims = new List<Claim>()
-                                                 //{
-                                                 //    new Claim(ClaimsIdentity.DefaultNameClaimType, blogVM.UserName),
-                                                 //    new Claim(ClaimsIdentity.DefaultRoleClaimType, blogVM.Role)
-                                                 //};
-                                                 //// создаем объект ClaimsIdentity
-                                                 //ClaimsIdentity claimId = new ClaimsIdentity
-                                                 //    (
-                                                 //    claims,
-                                                 //    "BlogApplication_Cookie",
-                                                 //    ClaimsIdentity.DefaultNameClaimType,
-                                                 //    ClaimsIdentity.DefaultRoleClaimType
-                                                 //    );
-                                                 ////_logger.LogInformation("Nen fdsfds {@user}", blogVM);
-                                                 ////var cl = GenerationTokenStation(blogVM.UserId);
-                                                 //// установка аутентификационных куки
-                                                 //await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimId));
-                                                 ////await HttpContext.SignInAsync("BlogApplication_Cookie", new ClaimsPrincipal(id));
-                return View("GreetingPage1", blogVM);
-
+                    //var claims = new List<Claim>()
+                    //{
+                    //    new Claim(ClaimsIdentity.DefaultNameClaimType, blogVM.UserName),
+                    //    new Claim(ClaimsIdentity.DefaultRoleClaimType, blogVM.Role)
+                    //};
+                    //// создаем объект ClaimsIdentity
+                    //ClaimsIdentity claimId = new ClaimsIdentity
+                    //    (
+                    //    claims,
+                    //    "BlogApplication_Cookie",
+                    //    ClaimsIdentity.DefaultNameClaimType,
+                    //    ClaimsIdentity.DefaultRoleClaimType
+                    //    );
+                    ////_logger.LogInformation("Nen fdsfds {@user}", blogVM);
+                    ////var cl = GenerationTokenStation(blogVM.UserId);
+                    //// установка аутентификационных куки
+                    //await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimId));
+                    ////await HttpContext.SignInAsync("BlogApplication_Cookie", new ClaimsPrincipal(id));
+                    return View("GreetingPage1", blogVM);
+                
             }
-            return View();
+            else
+            {
+                ModelState.AddModelError("", "Неправильный логин и (или) пароль");
+                return View();
+            }
         }
 
         [HttpGet]
@@ -155,11 +165,11 @@ namespace Blog_withPostgresql.Controllers
             // создаем один claim
             var claims = new List<Claim>
             {
-                new Claim(ClaimsIdentity.DefaultNameClaimType, user.Email),
-                new Claim(ClaimsIdentity.DefaultNameClaimType, user.Role),
+                new Claim(ClaimTypes.Name, user.Email),
+                new Claim(ClaimTypes.Role, user.Role),
             };
             // создаем объект ClaimsIdentity
-            ClaimsIdentity id = new ClaimsIdentity(claims, "BlogApplication_Cookie", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
+            ClaimsIdentity id = new ClaimsIdentity(claims, "BlogApplication_Cookie", ClaimTypes.Name, ClaimTypes.Role);
             // установка аутентификационных куки
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(id));
         }

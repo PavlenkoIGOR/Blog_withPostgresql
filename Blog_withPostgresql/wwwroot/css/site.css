@@ -25,10 +25,45 @@ form{
     width: 80%;
 }
 #registerFormDiv {
-    width: 300px;
+    width: 350px;
     background-color: steelblue;
     text-align: center;
 }
 #h1Div {
     text-align: center;
+}
+.regInput {
+    display: inline-grid;
+    margin-bottom: 20px;
+}
+
+#topDivMain {
+}
+
+#bottomDivMain {
+    position: relative;
+    display: inline-flex;
+}
+
+#leftDivMain {
+    display: inline-block;
+    width: 50vh;
+}
+
+#rightDivMain {
+    display: inline-flex;
+}
+
+#photoPlace {
+    color: white;
+    background-color: rgba(0,0,0,0.5);
+    width: 180px; /* ?????? ????????????? ?????? */
+    aspect-ratio: 9/13;
+    border: solid 4px rgb(57,227,237);
+    /*border-radius: 20px;*/
+}
+.userPostsTextArea {
+    height: 100px;
+    width: 100%;
+    background-color: bisque;
 }

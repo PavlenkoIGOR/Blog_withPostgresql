@@ -1,0 +1,75 @@
+﻿@model IEnumerable<Blog.BLL.ViewModels.UsersViewModel>
+@using Blog.BLL.ViewModels;
+@using Blog.BLL.Models;
+
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["Title"] = "ShowUsers";
+    //SignInManager.IsSignedIn();
+
+}
+@if (User.IsInRole("administrator"))
+{
+    <h1>Пользователи</h1>
+
+    <p>
+        <a asp-action="Create"></a>
+    </p>
+    <table border="1" cellpadding="5" width="100%">
+        <thead>
+            <tr>
+                <td bgcolor="steelblue" colspan="5" style="color: bisque">
+                    Таблица учётных записей
+                </td>
+            </tr>
+            <tr style="text-shadow: white 1px 1px 0, white -1px -1px 0,
+                    white -1px 1px 0, white 1px -1px 0;">
+                <th>
+                    @Html.DisplayNameFor(model => model.Name)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Email)
+                </th>
+                <th>
+                    @Html.DisplayName("Role")
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr style="background-color:rgba(0, 128, 128, 0.9); font-family:Arial; font-size:large;">
+                    <td>
+                        @Html.DisplayFor(model => item.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => item.Email)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(model => item.RoleType)
+                    </td>
+
+                    <td>
+                        @* ниже: создание <form></form> *@
+                        @using (Html.BeginForm("DeleteUser", "Blog", new { Id = item.Id }, FormMethod.Post))
+                        {
+                            @* ниже: создание кнопки и привязка к контроллеру *@
+                            @Html.ActionLink("Удалить", "DeleteUser", "Blog", new { Id = item.Id }, new { @class = "btn btn-primary btn-xs", style= "float:left; margin-right:5px; background-color: rgb(200,40,40);" })
+                            @* <button class="btn btn-danger btn-xs" type="submit">Удалить</button> *@
+                        }
+                    </td>
+                    <td>
+                        @* ниже: создание <form></form> *@
+                        @using (Html.BeginForm("EditUserPage", "User", new { Id = item.Id }, FormMethod.Post))
+                        {
+                            @* ниже: создание кнопки и привязка к контроллеру *@
+                            @Html.ActionLink("Редактировать", "EditUserPage", "User", new { Id = item.Id }, new { @class = "btn btn-primary btn-xs", style= "float:left; margin-right:5px; background-color: rgb(180,100,100);" })
+                            @* <button class="btn btn-danger btn-xs" type="submit">Удалить</button> *@
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

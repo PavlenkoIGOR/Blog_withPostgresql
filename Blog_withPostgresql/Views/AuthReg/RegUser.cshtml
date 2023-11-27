@@ -16,51 +16,51 @@
         <div id="registerFormDiv">
             <form method="post" asp-controller="AuthReg" asp-action="RegUser">
 
-                <div>
+                <div id="nameMainInputDiv" style="display: inline-grid;">
                     <div id="labelDiv">
                         @Html.LabelFor(model => model.Name)
                     </div>
-                    <div id="span_InputDiv">
+                    <div id="span_InputDiv" class="regInput" >
                         @Html.EditorFor(model => model.Name)
-                        @Html.ValidationMessageFor(model => model.Name)
+                        @Html.ValidationMessageFor(model => model.Name,  "", new { @class = "text-danger" })
                     </div>
                 </div>
 
-                <div id="ageMainInputDiv" style="position:relative; display:inline-flex;">
+                <div id="ageMainInputDiv" style="display:inline-grid;">
                     <div id="labelDiv">
                         <label asp-for="Age"></label>
                     </div>
-                    <div id="span_InputDiv">
-                        <input type="number" asp-for="Age" />
+                    <div id="span_InputDiv" class="regInput">
+                        <input type="number" asp-for="Age"/>
                         <span asp-validation-for="Age" class="text-danger"></span>
                     </div>
                 </div>
 
-                <div id="emailMainInputDiv" style="position:relative; display:inline-flex;">
+                <div id="emailMainInputDiv" style="display:inline-grid;">
                     <div id="labelDiv">
                         <label asp-for="Email"></label>
                     </div>
-                    <div id="span_InputDiv">
+                    <div id="span_InputDiv" class="regInput">
                         <input type="email" asp-for="Email" />
                         <span asp-validation-for="Email" class="text-danger"></span>
                     </div>
                 </div>
 
-                <div id="passw_MainInputDiv" style="position:relative; display:inline-flex;">
+                <div id="passw_MainInputDiv" style="display:inline-grid;">
                     <div id="labelDiv">
                         <label asp-for="Password"></label>
                     </div>
-                    <div id="span_InputDiv">
+                    <div id="span_InputDiv" class="regInput">
                         <input type="password" asp-for="Password" />
                         <span asp-validation-for="Password" class="text-danger"></span>
                     </div>
                 </div>
 
-                <div id="confirmpassw_MainInputDiv" style="position:relative; display:inline-flex;">
+                <div id="confirmpassw_MainInputDiv" style="display:inline-grid;">
                     <div id="labelDiv">
                         <label asp-for="ConfirmPassword"></label>
                     </div>
-                    <div id="span_InputDiv">
+                    <div id="span_InputDiv" style="display: inline-grid;">
                         <input type="password" asp-for="ConfirmPassword" />
                         <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
                     </div>

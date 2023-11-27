@@ -1,9 +1,7 @@
 ﻿using Blog.BLL.Models;
-using Blog.BLL.ViewModel;
 using Blog.BLL.ViewModels;
 using Blog_withPostgresql.Repositories;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 using System.Security.Claims;
@@ -37,6 +35,7 @@ namespace Blog_withPostgresql.Controllers
                     UserAge = user.Age,
                     UserName = user.Name
                 };
+                _logger.LogInformation($"пользователь аутентифицирован {DateTime.UtcNow}");
                 return View("GreetingPage", blogVM);
             }
             else

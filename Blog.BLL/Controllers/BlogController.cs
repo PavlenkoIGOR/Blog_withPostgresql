@@ -2,6 +2,7 @@
 using Blog.BLL.ViewModel;
 using Blog.BLL.ViewModels;
 using Blog_withPostgresql.Repositories;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -50,6 +51,36 @@ namespace Blog_withPostgresql.Controllers
         public IActionResult AllPostsPage(string selectedRole)
         {
   
+            return View();
+        }
+        #endregion
+
+        #region ShowUsers Настроено!
+
+        //[Authorize(Roles = "Administrator")] //так авторизация работает только для пользователей у которых  Role == "admin". На данный момент настроено через проверку в View Index
+        [HttpGet]
+        public async Task<IActionResult> ShowUsers()
+        {
+            bool role = HttpContext.User.IsInRole("administrator");
+            if (HttpContext.User.IsInRole("administrator"))
+            {
+                List<User> users1 = await _userRepo.GetAllUsers();
+                List<UsersViewModel> users = users1.Select(u => new UsersViewModel()
+                {
+                    Id = u.Id,
+                    Name = u.Name,
+                    Age = u.Age,
+                    Email = u.Email,
+                    RoleType = u.Role
+                }).ToList();
+                return View(users);
+            }
+            return RedirectToAction("Index", "Home");
+        }
+
+        [HttpPost]
+        public IActionResult ShowUsers(string selectedRole)
+        {
             return View();
         }
         #endregion

@@ -2,6 +2,7 @@
 using Blog.BLL.ViewModels;
 using Microsoft.Extensions.Configuration;
 using Npgsql;
+using System.Collections.Generic;
 using System.Security;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
@@ -14,6 +15,7 @@ namespace Blog_withPostgresql.Repositories
         public User GetUserByPassword(string password);
         public User GetUserById(int id);
         public Task EditUser(UsersViewModel usersViewModel);
+        public Task<List<User>> GetAllUsers();
     }
 
 
@@ -77,7 +79,7 @@ namespace Blog_withPostgresql.Repositories
                             user.Id = reader.GetInt32(0);//id
                             user.Name = reader.GetString(1);//Name
                             user.Age = reader.GetInt32(2);//Age                            
-                            user.Email = reader.GetString(3);//Password
+                            user.Email = reader.GetString(3);//Email
                             user.Password = reader.GetString(4);//Role
                             user.Role = reader.GetString(5);//Password
                         }
@@ -145,6 +147,39 @@ namespace Blog_withPostgresql.Repositories
                 connection.Close();
             }
             return user;
+        }
+
+        public async Task<List<User>> GetAllUsers()
+        {
+            
+            List<User> users = new List<User>();
+
+            string connectionString = _configuration.GetConnectionString("Bethlem");
+
+            using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+            {
+                await connection.OpenAsync();
+                string selectUserByEmail = "select * from users";
+                using (NpgsqlCommand command = new NpgsqlCommand(selectUserByEmail, connection))
+                {
+                    using (NpgsqlDataReader reader = await command.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            User user = new User();
+                            user.Id = reader.GetInt32(0);//id
+                            user.Name = reader.GetString(1);//Name
+                            user.Age = reader.GetInt32(2);//Age
+                            user.Role = reader.GetString(5);//Role
+                            user.Email = reader.GetString(3);//Email
+                            user.Password = reader.GetString(4);//Password 
+                            users.Add(user);
+                        }
+                    }
+                }
+                connection.CloseAsync().Wait();
+            }
+            return  users;
         }
 
         public async Task EditUser(UsersViewModel usersVM)
