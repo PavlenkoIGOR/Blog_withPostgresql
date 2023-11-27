@@ -46,11 +46,11 @@ namespace Blog_withPostgresql.Repositories
                 //}
                 using (var command = connection.CreateCommand())
                 {
-                    command.CommandText = "INSERT INTO posts (postTitle, postText, user_id, publicationdate) VALUES (@postTitle, @postText, @user_id, @publicationdate)";
-                    command.Parameters.AddWithValue("@postTitle", post.postTitle);
-                    command.Parameters.AddWithValue("@postText", post.postText);
+                    command.CommandText = "INSERT INTO posts (post_title, post_text, publication_date, user_id) VALUES (@post_title, @post_text, @publication_date, @user_id)";
+                    command.Parameters.AddWithValue("@post_title", post.postTitle);
+                    command.Parameters.AddWithValue("@post_text", post.postText);
                     command.Parameters.AddWithValue("@user_id", post.UserId);
-                    command.Parameters.AddWithValue("@publicationdate", post.PublicationDate);
+                    command.Parameters.AddWithValue("@publication_date", post.PublicationDate);
                     command.ExecuteNonQuery();
                 }
                 connection.CloseAsync().Wait();
