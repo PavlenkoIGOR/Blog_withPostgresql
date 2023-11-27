@@ -4,18 +4,19 @@ create table users
 (
 	id serial primary key not null,
 	name varchar(120) not null,
-	age integer not null,
-	role varchar(20) not null,
+	age integer not null,	
 	email varchar(120) not null unique,
-	password varchar(1200) not null
+	password varchar(1200) not null,
+	role varchar(20) not null
 )
 */
 /*
 create table posts
 (
 	id serial PRIMARY key not null,
-	postTitle varchar(250) not null,
-	postText varchar(8000) not null,
+	post_title varchar(250) not null,
+	post_text varchar(8000) not null,
+	publication_date TIMESTAMP not null,
 	user_id int references users (id) on delete cascade
 )
 */
@@ -68,4 +69,5 @@ create table roles
 alter table users 
 add column role varchar(20) not null 
 */
+
 ```
