@@ -32,19 +32,19 @@ namespace Blog_withPostgresql.Controllers
             //{
             //    tegForView.Add(tegsItem.TegTitle);
             //}
-
-            //var post = await _context.Posts.Include(t => t.Tegs).Select(p => new AllPostsViewModel
-            //{
-            //    Id = p.Id,
-            //    Author = p.User.UserName,
-            //    PublicationTime = p.PublicationDate,
-            //    Title = p.Title,
-            //    Text = p.Text,
-            //    TegsList = tegForView
-            //}).ToListAsync();
+            List<Post> posts = await _postRepo.GetAllPosts();
+            List<AllPostsViewModel> allpVM = posts.Select(p => new AllPostsViewModel
+            {
+                Id = p.Id,
+                PublicationTime = p.PublicationDate,
+                Title = p.postTitle,
+                Text = p.postText,
+                Author = _userRepo.GetUserById(p.UserId).Name
+                //TegsList = tegForView
+            }).ToList();
             ViewBag.List = tegForView;
             //await _logger.WriteEvent("Переход на страницу показа всех пользователей");
-            return View("AllPostsPage"/*, post*/);
+            return View("AllPostsPage", allpVM);
         }
 
         [HttpPost]
@@ -62,7 +62,7 @@ namespace Blog_withPostgresql.Controllers
         public async Task<IActionResult> ShowUsers()
         {
             bool role = HttpContext.User.IsInRole("administrator");
-            if (HttpContext.User.IsInRole("administrator"))
+            if (User.IsInRole("administrator"))
             {
                 List<User> users1 = await _userRepo.GetAllUsers();
                 List<UsersViewModel> users = users1.Select(u => new UsersViewModel()

@@ -12,7 +12,8 @@ namespace Blog_withPostgresql.Repositories
         public User GetUserByEmail(string email);
         public User GetUserByPassword(string password);
         public User GetUserById(int id);
-        public Task EditUser(UsersViewModel usersViewModel);
+        public Task EditPost(UsersViewModel usersViewModel);
+        public Task<List<Post>> GetAllPosts();
     }
 
 
@@ -29,11 +30,7 @@ namespace Blog_withPostgresql.Repositories
         {
             _configuration = configuration;
         }
-
-
-
-
-
+        
         public async Task AddPost(Post post)
         {
             string connectionString = _configuration.GetConnectionString("Bethlem"); /* = "Server=localhost;Username=postgres;Port=5432;Database=Bethlem;UserId=postgres;Password=postg1234;";*/
@@ -145,7 +142,40 @@ namespace Blog_withPostgresql.Repositories
             return user;
         }
 
-        public async Task EditUser(UsersViewModel usersVM)
+        public async Task<List<Post>> GetAllPosts()
+        {
+
+            List<Post> posts = new List<Post>();
+
+            string connectionString = _configuration.GetConnectionString("Bethlem");
+
+            using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+            {
+                await connection.OpenAsync();
+                string selectUserByEmail = "select * from posts";
+                using (NpgsqlCommand command = new NpgsqlCommand(selectUserByEmail, connection))
+                {
+                    using (NpgsqlDataReader reader = await command.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            Post post = new Post();
+                            post.Id = reader.GetInt32(0);//id
+                            post.postTitle = reader.GetString(1);//postTitle
+                            post.postText = reader.GetString(2);//postText
+                            post.PublicationDate = reader.GetDateTime(3);//PublicationDate
+                            post.UserId = reader.GetInt32(4);//UserId
+                            posts.Add(post);
+                        }
+                    }
+                }
+                connection.CloseAsync().Wait();
+            }
+            return posts;
+        }
+
+
+        public async Task EditPost(UsersViewModel usersVM)
         {
             string connectionString = _configuration.GetConnectionString("Bethlem"); /* = "Server=localhost;Username=postgres;Port=5432;Database=Bethlem;UserId=postgres;Password=postg1234;";*/
             User user = new User();
