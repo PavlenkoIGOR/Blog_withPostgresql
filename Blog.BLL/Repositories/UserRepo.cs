@@ -80,8 +80,8 @@ namespace Blog_withPostgresql.Repositories
                             user.Name = reader.GetString(1);//Name
                             user.Age = reader.GetInt32(2);//Age                            
                             user.Email = reader.GetString(3);//Email
-                            user.Password = reader.GetString(4);//Role
-                            user.Role = reader.GetString(5);//Password
+                            user.Password = reader.GetString(4);//Password
+                            user.Role = reader.GetString(5);//Role
                         }
                         reader.Close();
                     }
@@ -108,9 +108,9 @@ namespace Blog_withPostgresql.Repositories
                             user.Id = reader.GetInt32(0);//id
                             user.Name = reader.GetString(1);//Name
                             user.Age = reader.GetInt32(2);//Age
-                            user.Role = reader.GetString(5);//Role
                             user.Email = reader.GetString(3);//Email
-                            user.Password = reader.GetString(4);//Password                            
+                            user.Password = reader.GetString(4);//Password
+                            user.Role = reader.GetString(5);//Role
                         }
                         reader.Close();
                     }
@@ -151,7 +151,7 @@ namespace Blog_withPostgresql.Repositories
 
         public async Task<List<User>> GetAllUsers()
         {
-            
+
             List<User> users = new List<User>();
 
             string connectionString = _configuration.GetConnectionString("Bethlem");
@@ -179,7 +179,7 @@ namespace Blog_withPostgresql.Repositories
                 }
                 connection.CloseAsync().Wait();
             }
-            return  users;
+            return users;
         }
 
         public async Task EditUser(UsersViewModel usersVM)

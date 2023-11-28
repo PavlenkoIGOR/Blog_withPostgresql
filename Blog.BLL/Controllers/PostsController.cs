@@ -1,8 +1,10 @@
 ﻿using Blog.BLL.Models;
+using Blog.BLL.Repositories;
 using Blog.BLL.ViewModels;
 using Blog_withPostgresql.Repositories;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using System.Runtime.InteropServices;
 using System.Security.Claims;
 
 namespace Blog.BLL.Controllers
@@ -14,12 +16,17 @@ namespace Blog.BLL.Controllers
         private IMyLogger _logger;
         private IPostRepo _postRepo;
         IUserRepo _userRepo;
-        public PostsController(IWebHostEnvironment environment, IMyLogger logger, IPostRepo postRepo, IUserRepo userRepo)
+        private readonly ITegRepo _tegRepo;
+        IPostsTegsRepo _postsTegsRepo;
+
+        public PostsController(IWebHostEnvironment environment, IMyLogger logger, IPostRepo postRepo, IUserRepo userRepo, ITegRepo tegRepo, IPostsTegsRepo postsTegsRepo)
         {
             _env = environment;
             _logger = logger;
             _postRepo = postRepo;
             _userRepo = userRepo;
+            _tegRepo = tegRepo;
+            _postsTegsRepo = postsTegsRepo;
         }
         
         //[Authorize]
@@ -48,8 +55,6 @@ namespace Blog.BLL.Controllers
 
                 if (ModelState.IsValid)
                 {
-                    string postContent = viewModel.Text;
-
                     // Проверка существующего поста
                     //var existingPost = await _context.Posts
                     //.Include(p => p.Tegs)
@@ -58,28 +63,35 @@ namespace Blog.BLL.Controllers
 
                     if (/*existingPost == null*/true)
                     {
-                        // Создание нового поста
+                        //создание нового поста
                         var newPost = new Post
                         {
                             postTitle = viewModel.Title,
-                            PublicationDate = DateTime.UtcNow.AddHours(3),
-                            postText = postContent,
+                            PublicationDate = DateTime.UtcNow,
+                            postText = viewModel.Text,
                             UserId = user.Id
                         };
 
-                        //var tags = viewModel.HasWritingTags();
-                        //foreach (var tag in tags)
-                        //{
-                        //    var existingTag = await _context.Tegs.FirstOrDefaultAsync(t => t.TegTitle == tag.TegTitle);
-                        //    if (existingTag == null)
-                        //    {
-                        //        existingTag = new Teg { TegTitle = tag.TegTitle };
-                        //        _context.Tegs.Add(existingTag);
-                        //    }
-                        //    newPost.Tegs.Add(existingTag); // Добавить тег в пост
-                        //}
+                        //запись тегов и выдёргивание Id тегов
+                        List<int> tegIds = new List<int>();
+                        foreach (var tegVM in viewModel.HasWritingTags())
+                        {
+                            tegIds.Add(await _tegRepo.AddTeg(tegVM));
+                        }
 
-                        await _postRepo.AddPost(newPost);
+                        //запись нового поста
+                        int postId = await _postRepo.AddPost(newPost);
+
+                        //создание экземпляра PostsTegs
+                        foreach (var item in tegIds)
+                        {
+                            PostsTegs postsTegs = new PostsTegs()
+                            {
+                                PostId = postId,
+                                TegId = item
+                            };
+                            await _postsTegsRepo.InsertIntoPostTegs(postsTegs);
+                        }
                     }
 
                     return RedirectToAction("UserBlog", "Posts");

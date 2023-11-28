@@ -8,18 +8,13 @@ namespace Blog_withPostgresql.Repositories
 {
     public interface IPostRepo
     {
-        public Task AddPost(Post post);
+        public Task<int> AddPost(Post post);
         public User GetUserByEmail(string email);
         public User GetUserByPassword(string password);
         public User GetUserById(int id);
         public Task EditPost(UsersViewModel usersViewModel);
         public Task<List<Post>> GetAllPosts();
     }
-
-
-
-
-
 
 
     public class PostRepo : IPostRepo
@@ -31,27 +26,26 @@ namespace Blog_withPostgresql.Repositories
             _configuration = configuration;
         }
         
-        public async Task AddPost(Post post)
+        public async Task<int> AddPost(Post post)
         {
-            string connectionString = _configuration.GetConnectionString("Bethlem"); /* = "Server=localhost;Username=postgres;Port=5432;Database=Bethlem;UserId=postgres;Password=postg1234;";*/
+            int postId =default;
+            string connectionString = _configuration.GetConnectionString("Bethlem");
             using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
             {
-                connection.Open();
-                //using (var command = new NpgsqlCommand(sqlExpression, connection)) /************************************ так НЕ работает **************************/
-                //{
-                //    command.ExecuteNonQuery();
-                //}
+                await connection.OpenAsync();
                 using (var command = connection.CreateCommand())
                 {
-                    command.CommandText = "INSERT INTO posts (post_title, post_text, publication_date, user_id) VALUES (@post_title, @post_text, @publication_date, @user_id)";
+                    command.CommandText = "INSERT INTO posts (post_title, post_text, publication_date, user_id) VALUES (@post_title, @post_text, @publication_date, @user_id) RETURNING id";
                     command.Parameters.AddWithValue("@post_title", post.postTitle);
                     command.Parameters.AddWithValue("@post_text", post.postText);
                     command.Parameters.AddWithValue("@user_id", post.UserId);
-                    command.Parameters.AddWithValue("@publication_date", post.PublicationDate);
-                    command.ExecuteNonQuery();
+                    command.Parameters.AddWithValue("@publication_date", post.PublicationDate);                    
+                    //await command.ExecuteNonQueryAsync();
+                    postId = (int)(await command.ExecuteScalarAsync()); // Получаем id нового поста
                 }
                 connection.CloseAsync().Wait();
             }
+            return postId;
         }
 
         public User GetUserByEmail(string email)

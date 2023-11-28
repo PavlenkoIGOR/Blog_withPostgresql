@@ -1,4 +1,5 @@
 using Blog.BLL;
+using Blog.BLL.Repositories;
 using Blog_withPostgresql.Repositories;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
@@ -16,6 +17,8 @@ namespace Blog_withPostgresql
             builder.Services.AddScoped<IUserRepo, UserRepo>(); //****добавлено для своих репозиториев
             builder.Services.AddScoped<IPostRepo, PostRepo>(); //****добавлено для своих репозиториев
             builder.Services.AddScoped<IMyLogger, MyLogger>(); //****добавлено для своих репозиториев
+            builder.Services.AddScoped<ITegRepo, TegRepo>(); //****добавлено для своих репозиториев
+            builder.Services.AddScoped<IPostsTegsRepo, PostsTegsRepo>(); //****добавлено для своих репозиториев
 
             //
             builder.Services.AddAuthorization();
