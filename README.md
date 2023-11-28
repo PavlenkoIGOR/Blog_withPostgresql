@@ -34,11 +34,11 @@ create table comments
 create table tegs
 (
 	id serial primary key not null,
-	"tegTitle" varchar(100) not null
+	teg_title varchar(100) not null
 );
 */
 /*
-CREATE TABLE post_tegs (
+CREATE TABLE posts_tegs (
 post_id INTEGER REFERENCES posts (id) ON DELETE CASCADE,
 teg_id INTEGER REFERENCES tegs (id) ON DELETE CASCADE,
 PRIMARY KEY (post_id, teg_id)
@@ -69,5 +69,4 @@ create table roles
 alter table users 
 add column role varchar(20) not null 
 */
-
 ```
