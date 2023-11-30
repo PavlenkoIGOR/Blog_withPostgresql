@@ -1,4 +1,5 @@
 ﻿using Blog.BLL.Models;
+using Blog.BLL.Repositories;
 using Blog.BLL.ViewModel;
 using Blog.BLL.ViewModels;
 using Blog_withPostgresql.Repositories;
@@ -15,23 +16,22 @@ namespace Blog_withPostgresql.Controllers
         IUserRepo _userRepo;
         IPostRepo _postRepo;
         IConfiguration _configuration;
-        public BlogController(IConfiguration configuration, IUserRepo userRepo, IPostRepo postRepo)       
+        ITegRepo _tegRepo;
+        public BlogController(IConfiguration configuration, IUserRepo userRepo, IPostRepo postRepo, ITegRepo tegRepo)       
         {
             _configuration = configuration;
             _userRepo = userRepo;
             _postRepo = postRepo;
+            _tegRepo = tegRepo;
         }
         
         #region ShowAllPosts
         [HttpGet]
         public async Task<IActionResult> AllPostsPage()
         {
-            //HashSet<Teg> tegsModel = _context.Tegs.ToHashSet();
-            HashSet<string> tegForView = new HashSet<string>();
-            //foreach (var tegsItem in tegsModel)
-            //{
-            //    tegForView.Add(tegsItem.TegTitle);
-            //}
+            List<Teg> tegsModel = await _tegRepo.GetAllTegs();
+
+
             List<Post> posts = await _postRepo.GetAllPosts();
             List<AllPostsViewModel> allpVM = posts.Select(p => new AllPostsViewModel
             {
@@ -42,7 +42,7 @@ namespace Blog_withPostgresql.Controllers
                 Author = _userRepo.GetUserById(p.UserId).Name
                 //TegsList = tegForView
             }).ToList();
-            ViewBag.List = tegForView;
+            ViewBag.List = tegsModel;
             //await _logger.WriteEvent("Переход на страницу показа всех пользователей");
             return View("AllPostsPage", allpVM);
         }

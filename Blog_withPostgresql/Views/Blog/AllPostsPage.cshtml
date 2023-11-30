@@ -23,7 +23,7 @@ else
         @foreach (var item in ViewBag.List)
         {
             <div style="color:orange; display:inline-flex;">
-                <a asp-controller="Blog" asp-action="ShowPostsByTeg" asp-route-tegTitle="@item">@item</a>
+                <a asp-controller="Blog" asp-action="ShowPostsByTeg" asp-route-tegTitle="@item.tegTitle">@item.tegTitle</a>
                 @{
                     i++;
                 }

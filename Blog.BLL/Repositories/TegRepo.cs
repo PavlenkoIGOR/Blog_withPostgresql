@@ -1,12 +1,6 @@
 ﻿using Blog.BLL.Models;
 using Microsoft.Extensions.Configuration;
 using Npgsql;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.PortableExecutable;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Blog.BLL.Repositories
 {
@@ -14,6 +8,7 @@ namespace Blog.BLL.Repositories
     {
         public Task<int> AddTeg(Teg teg);
         public Teg FindTegByTitle(string tegTitle);
+        public Task<List<Teg>> GetAllTegs();
     }
 
     public class TegRepo : ITegRepo
@@ -72,6 +67,34 @@ namespace Blog.BLL.Repositories
                 connection.Close();
             }
             return teg;
+        }
+
+        public async Task<List<Teg>> GetAllTegs()
+        {
+            List<Teg> tegs = new List<Teg>();
+
+            string connectionString = _configuration.GetConnectionString("Bethlem");
+
+            using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+            {
+                await connection.OpenAsync();
+                string selectUserByEmail = "select * from tegs";
+                using (NpgsqlCommand command = new NpgsqlCommand(selectUserByEmail, connection))
+                {
+                    using (NpgsqlDataReader reader = await command.ExecuteReaderAsync())
+                    {
+                        while (await reader.ReadAsync())
+                        {
+                            Teg teg = new Teg();
+                            teg.Id = reader.GetInt32(0);//id
+                            teg.tegTitle = reader.GetString(1);//Name
+                            tegs.Add(teg);
+                        }
+                    }
+                }
+                connection.CloseAsync().Wait();
+            }
+            return tegs;
         }
     }
 }
