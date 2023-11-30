@@ -1,0 +1,37 @@
+﻿@model Blog.BLL.ViewModels.UsersViewModel
+@using Blog.BLL.ViewModels;
+﻿﻿@using Microsoft.AspNetCore.Identity;
+@using Blog.BLL.Models;
+@using Blog.BLL;
+@using System.Security.Claims;
+@{
+    ViewData["Title"] = "Редактирование профиля";
+    //var identity = (ClaimsPrincipal)Thread.CurrentPrincipal;
+    //var age = identity.Claims.Where(c => c.Type == "Administrator").Select(c => c.Value).SingleOrDefault();
+}
+<div class="divHead" >
+    <h1>Редактирование профиля @Model.Name, @Model.Email</h1>
+</div>
+<div style="background-color:steelblue; position: relative;  display: flex;">
+    <form style="display: inline-grid; position: relative; margin: auto;" method="post" asp-controller="User" asp-action="EditUserByAdmin">
+
+        <input asp-for="Id" type="hidden" value="@Model.Id">
+
+        <span asp-validation-for="Name">Имя пользователя</span>
+        <input asp-for="Name" value="@Model.Name"/>
+
+        <span asp-validation-for="Age">Возраст пользователя</span>
+        <input asp-for="Age" value="@Model.Age"/>
+
+        <span asp-validation-for="Email">Email пользователя</span>
+        <input asp-for="Email" value="@Model.Email"/>
+        @if (User.IsInRole("administrator"))
+        {
+            <span asp-validation-for="RoleType">Роль пользователя</span>
+            <select asp-for="RoleType" asp-items="Html.GetEnumSelectList(typeof(RolesViewModel))"></select>
+            @* <input asp-for="RoleType" value="@Model.RoleType"/> *@
+        }
+        <hr/>
+        <button type="submit">Сохранить изменения</button>
+    </form>
+</div>
