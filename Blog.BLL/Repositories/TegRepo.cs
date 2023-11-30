@@ -4,6 +4,7 @@ using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.PortableExecutable;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -12,6 +13,7 @@ namespace Blog.BLL.Repositories
     public interface ITegRepo
     {
         public Task<int> AddTeg(Teg teg);
+        public Teg FindTegByTitle(string tegTitle);
     }
 
     public class TegRepo : ITegRepo
@@ -42,6 +44,34 @@ namespace Blog.BLL.Repositories
                 connection.CloseAsync().Wait();
             }
             return tegId;
+        }
+
+        public Teg FindTegByTitle(string tegTitle)
+        {
+            Teg teg = new Teg();
+
+            string connectionString = _configuration.GetConnectionString("Bethlem"); /* = "Server=localhost;Username=postgres;Port=5432;Database=Bethlem;UserId=postgres;Password=postg1234;";*/
+
+            using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+            {
+                connection.Open();
+                string selectUserByEmail = "select * from tegs where teg_title = @teg_title";
+                using (NpgsqlCommand command = new NpgsqlCommand(selectUserByEmail, connection))
+                {
+                    command.Parameters.AddWithValue("@teg_title", tegTitle);
+                    using (NpgsqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            teg.Id = reader.GetInt32(0);//id
+                            teg.tegTitle = reader.GetString(1);//teg_title                          
+                        }
+                        reader.Close();
+                    }
+                }
+                connection.Close();
+            }
+            return teg;
         }
     }
 }

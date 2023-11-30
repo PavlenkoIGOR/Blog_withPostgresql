@@ -76,7 +76,15 @@ namespace Blog.BLL.Controllers
                         List<int> tegIds = new List<int>();
                         foreach (var tegVM in viewModel.HasWritingTags())
                         {
-                            tegIds.Add(await _tegRepo.AddTeg(tegVM));
+                            if (_tegRepo.FindTegByTitle(tegVM.tegTitle).tegTitle == null)
+                            {
+                                int idTeg = await _tegRepo.AddTeg(tegVM);
+                                tegIds.Add(idTeg);
+                            }
+                            else
+                            {
+                                tegIds.Add(_tegRepo.FindTegByTitle(tegVM.tegTitle).Id);
+                            }
                         }
 
                         //запись нового поста
@@ -90,6 +98,7 @@ namespace Blog.BLL.Controllers
                                 PostId = postId,
                                 TegId = item
                             };
+                            
                             await _postsTegsRepo.InsertIntoPostTegs(postsTegs);
                         }
                     }
