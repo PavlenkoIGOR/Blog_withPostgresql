@@ -16,6 +16,7 @@ namespace Blog_withPostgresql.Repositories
         public User GetUserById(int id);
         public Task EditUser(UsersViewModel usersViewModel);
         public Task<List<User>> GetAllUsers();
+        public Task DeleteUser(int userId);
     }
 
 
@@ -197,6 +198,24 @@ namespace Blog_withPostgresql.Repositories
                     command.Parameters.AddWithValue("@email", usersVM.Email);
                     command.Parameters.AddWithValue("@age", usersVM.Age);
                     command.Parameters.AddWithValue("@role", usersVM.RoleType);
+                    command.ExecuteNonQuery();
+                }
+                connection.Close();
+            }
+        }
+
+        public async Task DeleteUser(int userId)
+        {
+            string connectionString = _configuration.GetConnectionString("Bethlem"); /* = "Server=localhost;Username=postgres;Port=5432;Database=Bethlem;UserId=postgres;Password=postg1234;";*/
+            User user = new User();
+            using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+            {
+                connection.Open();
+                /*обновление данных*/
+                using (var command = connection.CreateCommand())
+                {
+                    command.CommandText = "DELETE FROM users where id = @id";
+                    command.Parameters.AddWithValue("@id", userId);
                     command.ExecuteNonQuery();
                 }
                 connection.Close();

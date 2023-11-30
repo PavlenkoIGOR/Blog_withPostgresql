@@ -84,5 +84,24 @@ namespace Blog_withPostgresql.Controllers
             return View();
         }
         #endregion
+
+        [HttpGet]
+        public async Task<IActionResult> DeleteUser(UsersViewModel usersVM)
+        {
+            
+            await _userRepo.DeleteUser(usersVM.Id);
+
+            //List<User> users1 = await _userRepo.GetAllUsers();
+            //List<UsersViewModel> users = users1.Select(u => new UsersViewModel()
+            //{
+            //    Id = u.Id,
+            //    Name = u.Name,
+            //    Age = u.Age,
+            //    Email = u.Email,
+            //    RoleType = u.Role
+            //}).ToList();
+
+            return RedirectToAction("ShowUsers", "Blog");
+        }
     }
 }
