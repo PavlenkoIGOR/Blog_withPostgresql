@@ -1,6 +1,5 @@
 ﻿using Blog.BLL.Models;
 using System.ComponentModel.DataAnnotations;
-
 namespace Blog.BLL.ViewModels;
 
 public class UserBlogViewModel

@@ -21,8 +21,8 @@ body {
   margin-bottom: 60px;
 }
 form{
-    display: inline-grid;
-    width: 80%;
+    /*display: inline-grid;*/
+    width: 100%;
 }
 #registerFormDiv {
     width: 350px;

@@ -4,6 +4,7 @@ using Blog.BLL.ViewModels;
 using Blog_withPostgresql.Repositories;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration.UserSecrets;
 using System.Runtime.InteropServices;
 using System.Security.Claims;
 
@@ -30,17 +31,17 @@ namespace Blog.BLL.Controllers
         }
         
         //[Authorize]
-        [HttpGet]
+        [HttpGet("UserBlog")]
         public async Task<IActionResult> UserBlog()
         {
-            var currentUser = HttpContext.User;
-            var userId = Convert.ToInt32(currentUser.FindFirstValue(ClaimTypes.NameIdentifier)); //представляет идентификатор пользователя.
-
-            UserBlogViewModel model = new UserBlogViewModel();
-            //model.UserPosts = await _context.Posts.Where(p => p.UserId == userId).ToListAsync();
-            model.Id = userId;
-
-            return View(model);
+            var userEmail = HttpContext.User.Identity.Name;
+            User userByEmail = _userRepo.GetUserByEmail(userEmail);
+            List<Post> currentPosts = (await _postRepo.GetAllPosts()).Where(p => p.UserId == userByEmail.Id).ToList();
+            UserBlogViewModel userBlogViewModel = new UserBlogViewModel()
+            {
+                UserPosts = currentPosts 
+            };
+            return View(userBlogViewModel);
         }
         
         [HttpPost]

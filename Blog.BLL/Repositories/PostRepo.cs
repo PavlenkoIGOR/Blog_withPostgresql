@@ -11,7 +11,7 @@ namespace Blog_withPostgresql.Repositories
         public Task<int> AddPost(Post post);
         public User GetUserByEmail(string email);
         public User GetUserByPassword(string password);
-        public User GetUserById(int id);
+        public Post GetPostById(int id);
         public Task EditPost(UsersViewModel usersViewModel);
         public Task<List<Post>> GetAllPosts();
     }
@@ -25,10 +25,10 @@ namespace Blog_withPostgresql.Repositories
         {
             _configuration = configuration;
         }
-        
+
         public async Task<int> AddPost(Post post)
         {
-            int postId =default;
+            int postId = default;
             string connectionString = _configuration.GetConnectionString("Bethlem");
             using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
             {
@@ -39,7 +39,7 @@ namespace Blog_withPostgresql.Repositories
                     command.Parameters.AddWithValue("@post_title", post.postTitle);
                     command.Parameters.AddWithValue("@post_text", post.postText);
                     command.Parameters.AddWithValue("@user_id", post.UserId);
-                    command.Parameters.AddWithValue("@publication_date", post.PublicationDate);                    
+                    command.Parameters.AddWithValue("@publication_date", post.PublicationDate);
                     //await command.ExecuteNonQueryAsync();
                     postId = (int)(await command.ExecuteScalarAsync()); // Получаем id нового поста
                 }
@@ -106,14 +106,14 @@ namespace Blog_withPostgresql.Repositories
             }
             return user;
         }
-        public User GetUserById(int id)
+        public Post GetPostById(int id)
         {
             string connectionString = _configuration.GetConnectionString("Bethlem"); /* = "Server=localhost;Username=postgres;Port=5432;Database=Bethlem;UserId=postgres;Password=postg1234;";*/
-            User user = new User();
+            Post post = new Post();
             using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
             {
                 connection.Open();
-                string selectUserByEmail = "select * from users where id = @id";
+                string selectUserByEmail = "select * from posts where id = @id";
                 using (NpgsqlCommand command = new NpgsqlCommand(selectUserByEmail, connection))
                 {
                     command.Parameters.AddWithValue("@id", id);
@@ -121,24 +121,22 @@ namespace Blog_withPostgresql.Repositories
                     {
                         while (reader.Read())
                         {
-                            user.Id = reader.GetInt32(0);//id
-                            user.Name = reader.GetString(1);//Name
-                            user.Age = reader.GetInt32(2);//Age
-                            user.Role = reader.GetString(5);//Role
-                            user.Email = reader.GetString(3);//Email
-                            user.Password = reader.GetString(4);//Password                            
+                            post.Id = reader.GetInt32(0);//id
+                            post.postTitle = reader.GetString(1);//post_title
+                            post.postText = reader.GetString(2);//post_text
+                            post.PublicationDate = reader.GetDateTime(3);//PublicationDate
+                            post.UserId = reader.GetInt32(4);//UserId
                         }
                         reader.Close();
                     }
                 }
                 connection.Close();
             }
-            return user;
+            return post;
         }
 
         public async Task<List<Post>> GetAllPosts()
         {
-
             List<Post> posts = new List<Post>();
 
             string connectionString = _configuration.GetConnectionString("Bethlem");

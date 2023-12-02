@@ -50,7 +50,7 @@
             </div>
             <div id="allUserPosts"></div>
         </div>
-@* 
+ 
         <div style="position: relative; display:inline-block;">
             <div style="color: bisque; background-color:teal; text-align: center;">Все Ваши посты</div>
             @if (Model.UserPosts != null)
@@ -58,14 +58,14 @@
 
                 @foreach (var item in Model.UserPosts)
                 {
-                    <div style="color: bisque; background-color:teal">
+@*                     <div style="color: bisque; background-color:teal">
                         @foreach (var teg in item.Tegs)
                         {
                             @teg.TegTitle
                         }
-                    </div>
-
-                    <div style="background-color:bisque;"> @item.Text</div>
+                    </div> *@
+                    <div style="background-color:bisque;"> @item.postTitle</div>
+                    <div style="background-color:bisque;"> @item.postText</div>
 
                     <div style="color: bisque; background-color:teal">
                         Дата публикации: @item.PublicationDate
@@ -84,7 +84,7 @@
             {
                 <h1>nothing!</h1>
             }
-        </div> *@
+        </div>
 
     </div>
 

@@ -117,7 +117,7 @@ namespace Blog_withPostgresql.Controllers
                     //// установка аутентификационных куки
                     //await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimId));
                     ////await HttpContext.SignInAsync("BlogApplication_Cookie", new ClaimsPrincipal(id));
-                    return RedirectToAction("GreetingPage1", blogVM);
+                    return RedirectToAction("GreetingPage", blogVM);
                 
             }
             else
