@@ -19,6 +19,7 @@ namespace Blog_withPostgresql.Controllers
             _userRepo = userRepo;
         }
 
+        [HttpGet]
         public IActionResult Index()
         {
             if (HttpContext.User.Identity.IsAuthenticated)
@@ -36,12 +37,18 @@ namespace Blog_withPostgresql.Controllers
                     UserName = user.Name
                 };
                 _logger.LogInformation($"пользователь аутентифицирован {DateTime.UtcNow}");
-                return View("GreetingPage", blogVM);
+                return RedirectToAction("GreetingPage", blogVM);
             }
             else
             {
                 return View();
             }
+        }
+
+        [HttpGet]
+        public IActionResult GreetingPage(UserBlogViewModel ubVM)
+        {
+            return View(ubVM);
         }
 
         public IActionResult Privacy()

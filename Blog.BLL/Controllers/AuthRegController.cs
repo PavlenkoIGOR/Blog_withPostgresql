@@ -41,9 +41,17 @@ namespace Blog_withPostgresql.Controllers
         {
             if (ModelState.IsValid)
             {
-                await _userRepo.AddUser(userView);
+                int userId = await _userRepo.AddUserAndGetId(userView);
                 await Authenticate(userView.Email);
-                return RedirectToAction("UserBlog", "Posts");
+                User user = _userRepo.GetUserById(userId);
+
+                UserBlogViewModel usersBlogModel = new UserBlogViewModel() 
+                {
+                    UserName = userView.Name,
+                    Role = user.Role
+                };
+                //return RedirectToAction("UserBlog", "Posts");
+                return RedirectToAction("GreetingPage", "Home", usersBlogModel);
             }
             return View(userView);
         }
@@ -109,7 +117,7 @@ namespace Blog_withPostgresql.Controllers
                     //// установка аутентификационных куки
                     //await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimId));
                     ////await HttpContext.SignInAsync("BlogApplication_Cookie", new ClaimsPrincipal(id));
-                    return View("GreetingPage1", blogVM);
+                    return RedirectToAction("GreetingPage1", blogVM);
                 
             }
             else

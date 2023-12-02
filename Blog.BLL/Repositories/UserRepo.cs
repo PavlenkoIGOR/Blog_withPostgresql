@@ -11,12 +11,13 @@ namespace Blog_withPostgresql.Repositories
     public interface IUserRepo
     {
         public Task AddUser(UserRegViewModel userView);
+        public Task<int> AddUserAndGetId(UserRegViewModel userView);
         public User GetUserByEmail(string email);
         public User GetUserByPassword(string password);
         public User GetUserById(int id);
         public Task EditUser(UsersViewModel usersViewModel);
         public Task<List<User>> GetAllUsers();
-        public Task DeleteUser(int userId);
+        public Task DeleteUser(int userId);        
     }
 
 
@@ -61,7 +62,31 @@ namespace Blog_withPostgresql.Repositories
                 connection.CloseAsync().Wait();
             }
         }
-
+        public async Task<int> AddUserAndGetId(UserRegViewModel userView)
+        {
+            int userId = default;
+            string connectionString = _configuration.GetConnectionString("Bethlem"); /* = "Server=localhost;Username=postgres;Port=5432;Database=Bethlem;UserId=postgres;Password=postg1234;";*/
+            using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
+            {
+                connection.Open();
+                //using (var command = new NpgsqlCommand(sqlExpression, connection)) /************************************ так НЕ работает **************************/
+                //{
+                //    command.ExecuteNonQuery();
+                //}
+                using (var command = connection.CreateCommand())
+                {
+                    command.CommandText = "INSERT INTO Users (name, age, role, email, password) VALUES (@name, @age, @role, @email, @password) returning id";
+                    command.Parameters.AddWithValue("@name", userView.Name);
+                    command.Parameters.AddWithValue("@email", userView.Email);
+                    command.Parameters.AddWithValue("@password", PasswordHash.HashPassword(userView.Password));
+                    command.Parameters.AddWithValue("@age", userView.Age);
+                    command.Parameters.AddWithValue("@role", "user");
+                    userId = (int)(await command.ExecuteScalarAsync()); // Получаем id нового тега                    
+                }
+                connection.CloseAsync().Wait();
+            }
+            return userId;
+        }
         public User GetUserByEmail(string email)
         {
             string connectionString = _configuration.GetConnectionString("Bethlem"); /* = "Server=localhost;Username=postgres;Port=5432;Database=Bethlem;UserId=postgres;Password=postg1234;";*/
