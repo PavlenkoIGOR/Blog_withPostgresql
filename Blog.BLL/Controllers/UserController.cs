@@ -66,6 +66,7 @@ namespace Blog.BLL.Controllers
                     user.Id = usersVM.Id;
                     user.Email = usersVM.Email;
                     user.Name = usersVM.Name;
+                    user.Role = userRole;
 
                     await _userRepo.EditUser(user);
 

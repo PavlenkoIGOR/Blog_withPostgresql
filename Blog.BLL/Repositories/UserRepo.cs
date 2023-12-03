@@ -217,7 +217,7 @@ namespace Blog_withPostgresql.Repositories
                 /*обновление данных*/
                 using (var command = connection.CreateCommand())
                 {
-                    command.CommandText = "update users set name = @name, age = @age, email = @email, role = @role where id = @id";
+                    command.CommandText = $"update users set name = @name, age = @age, email = @email, role = @role where id = {user.Id}";
                     command.Parameters.AddWithValue("@name", user.Name);
                     command.Parameters.AddWithValue("@email", user.Email);
                     command.Parameters.AddWithValue("@age", user.Age);
