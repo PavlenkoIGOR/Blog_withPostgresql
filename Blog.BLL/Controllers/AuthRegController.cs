@@ -39,7 +39,7 @@ namespace Blog_withPostgresql.Controllers
         [HttpPost]
         public async Task<IActionResult> RegUser(UserRegViewModel userView)
         {
-            if (ModelState.IsValid)
+            if (ModelState.IsValid) //необходимо добавить проверку наличия БД и её заполнености
             {
                 int userId = await _userRepo.AddUserAndGetId(userView);
                 await Authenticate(userView.Email);
@@ -117,7 +117,7 @@ namespace Blog_withPostgresql.Controllers
                     //// установка аутентификационных куки
                     //await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimId));
                     ////await HttpContext.SignInAsync("BlogApplication_Cookie", new ClaimsPrincipal(id));
-                    return RedirectToAction("GreetingPage", blogVM);
+                    return RedirectToAction("GreetingPage", "Home", blogVM);
                 
             }
             else

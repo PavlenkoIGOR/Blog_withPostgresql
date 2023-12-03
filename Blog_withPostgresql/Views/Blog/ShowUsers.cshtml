@@ -8,7 +8,7 @@
     //SignInManager.IsSignedIn();
 
 }
-@if (User.IsInRole("administrator"))
+@if (User.IsInRole("administrator") | User.IsInRole("Administrator"))
 {
     <h1>Пользователи</h1>
 

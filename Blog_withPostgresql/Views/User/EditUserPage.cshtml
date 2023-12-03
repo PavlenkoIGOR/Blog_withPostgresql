@@ -25,11 +25,11 @@
 
         <span asp-validation-for="Email">Email пользователя</span>
         <input asp-for="Email" value="@Model.Email"/>
-        @if (User.IsInRole("administrator"))
+        @if (User.IsInRole("administrator") || User.IsInRole("Administrator"))
         {
             <span asp-validation-for="RoleType">Роль пользователя</span>
             <select asp-for="RoleType" asp-items="Html.GetEnumSelectList(typeof(RolesViewModel))"></select>
-            @* <input asp-for="RoleType" value="@Model.RoleType"/> *@
+            @* <input asp-for="RoleType" value="@Model.RoleType"/> если надо вручную вводить*@
         }
         <hr/>
         <button type="submit">Сохранить изменения</button>

@@ -15,7 +15,7 @@ namespace Blog_withPostgresql.Repositories
         public User GetUserByEmail(string email);
         public User GetUserByPassword(string password);
         public User GetUserById(int id);
-        public Task EditUser(UsersViewModel usersViewModel);
+        public Task EditUser(User user);
         public Task<List<User>> GetAllUsers();
         public Task DeleteUser(int userId);        
     }
@@ -56,7 +56,7 @@ namespace Blog_withPostgresql.Repositories
                     command.Parameters.AddWithValue("@email", userView.Email);
                     command.Parameters.AddWithValue("@password", PasswordHash.HashPassword(userView.Password));
                     command.Parameters.AddWithValue("@age", userView.Age);
-                    command.Parameters.AddWithValue("@role", "user");
+                    command.Parameters.AddWithValue("@role", "User");
                     command.ExecuteNonQuery();
                 }
                 connection.CloseAsync().Wait();
@@ -80,7 +80,7 @@ namespace Blog_withPostgresql.Repositories
                     command.Parameters.AddWithValue("@email", userView.Email);
                     command.Parameters.AddWithValue("@password", PasswordHash.HashPassword(userView.Password));
                     command.Parameters.AddWithValue("@age", userView.Age);
-                    command.Parameters.AddWithValue("@role", "user");
+                    command.Parameters.AddWithValue("@role", "User");
                     userId = (int)(await command.ExecuteScalarAsync()); // Получаем id нового тега                    
                 }
                 connection.CloseAsync().Wait();
@@ -208,10 +208,9 @@ namespace Blog_withPostgresql.Repositories
             return users;
         }
 
-        public async Task EditUser(UsersViewModel usersVM)
+        public async Task EditUser(User user)
         {
             string connectionString = _configuration.GetConnectionString("Bethlem"); /* = "Server=localhost;Username=postgres;Port=5432;Database=Bethlem;UserId=postgres;Password=postg1234;";*/
-            User user = new User();
             using (NpgsqlConnection connection = new NpgsqlConnection(connectionString))
             {
                 connection.Open();
@@ -219,10 +218,10 @@ namespace Blog_withPostgresql.Repositories
                 using (var command = connection.CreateCommand())
                 {
                     command.CommandText = "update users set name = @name, age = @age, email = @email, role = @role where id = @id";
-                    command.Parameters.AddWithValue("@name", usersVM.Name);
-                    command.Parameters.AddWithValue("@email", usersVM.Email);
-                    command.Parameters.AddWithValue("@age", usersVM.Age);
-                    command.Parameters.AddWithValue("@role", usersVM.RoleType);
+                    command.Parameters.AddWithValue("@name", user.Name);
+                    command.Parameters.AddWithValue("@email", user.Email);
+                    command.Parameters.AddWithValue("@age", user.Age);
+                    command.Parameters.AddWithValue("@role", user.Role);
                     command.ExecuteNonQuery();
                 }
                 connection.Close();

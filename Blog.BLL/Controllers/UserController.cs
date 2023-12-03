@@ -36,7 +36,15 @@ namespace Blog.BLL.Controllers
         public async Task<IActionResult> EditUserByAdmin(UsersViewModel usersVM)
         {
             string userRole = String.Empty;
-
+            foreach (RolesViewModel role in Enum.GetValues(typeof(RolesViewModel)))
+            {
+                if (role.GetHashCode() == Convert.ToInt32(usersVM.RoleType))
+                {
+                    // Найдено соответствующее значение по хэш-коду
+                    Console.WriteLine("Найдено значение: " + role.ToString());
+                    userRole = role.ToString();
+                }
+            }
             if (ModelState.IsValid)
             {
                 UsersViewModel uVM = new UsersViewModel();
@@ -59,7 +67,7 @@ namespace Blog.BLL.Controllers
                     user.Email = usersVM.Email;
                     user.Name = usersVM.Name;
 
-                    await _userRepo.EditUser(usersVM);
+                    await _userRepo.EditUser(user);
 
                 }
 
