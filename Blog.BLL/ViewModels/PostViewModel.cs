@@ -1,6 +1,6 @@
-﻿using Blog.BLL.Models;
+﻿using Blog.Data.Models;
 
-namespace Blog.BLL.ViewModel;
+namespace Blog.BLL.ViewModels;
 
 public class PostViewModel
 {

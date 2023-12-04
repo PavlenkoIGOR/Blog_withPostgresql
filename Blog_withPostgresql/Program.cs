@@ -1,5 +1,5 @@
 using Blog.BLL;
-using Blog.BLL.Repositories;
+using Blog.Data.Repositories;
 using Blog_withPostgresql.Repositories;
 using Microsoft.AspNetCore.Authentication.Cookies;
 

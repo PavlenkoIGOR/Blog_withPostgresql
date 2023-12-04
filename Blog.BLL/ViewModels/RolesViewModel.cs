@@ -1,21 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace Blog.BLL.ViewModels
+namespace Blog.BLL.ViewModels;
+
+public enum RolesViewModel
 {
-    public enum RolesViewModel
-    {
-        [Display(Name = "User")]
-        User,
+    [Display(Name = "User")]
+    User,
 
-        [Display(Name = "Moderator")]
-        Moderator,
+    [Display(Name = "Moderator")]
+    Moderator,
 
-        [Display(Name = "Administrator")]
-        Administrator
-    }
+    [Display(Name = "Administrator")]
+    Administrator
 }

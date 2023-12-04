@@ -1,11 +1,9 @@
-﻿using Blog.BLL.Models;
-using Blog.BLL.Repositories;
-using Blog.BLL.ViewModels;
+﻿using Blog.BLL.ViewModels;
+using Blog.Data.Models;
+using Blog.Data.Repositories;
 using Blog_withPostgresql.Repositories;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration.UserSecrets;
-using System.Runtime.InteropServices;
 using System.Security.Claims;
 
 namespace Blog.BLL.Controllers
@@ -31,7 +29,7 @@ namespace Blog.BLL.Controllers
         }
         
         //[Authorize]
-        [HttpGet("UserBlog")]
+        [HttpGet]
         public async Task<IActionResult> UserBlog()
         {
             var userEmail = HttpContext.User.Identity.Name;
@@ -56,12 +54,6 @@ namespace Blog.BLL.Controllers
 
                 if (ModelState.IsValid)
                 {
-                    // Проверка существующего поста
-                    //var existingPost = await _context.Posts
-                    //.Include(p => p.Tegs)
-                    //.Include(p => p.User)
-                    //.FirstOrDefaultAsync(p => p.Id == viewModel.PostId);
-
                     if (/*existingPost == null*/true)
                     {
                         //создание нового поста
@@ -108,9 +100,6 @@ namespace Blog.BLL.Controllers
                 }
                 else
                 {
-                    //var addPosstsForView = await _context.Posts
-                    //    .Where(u => u.UserId == userId).ToListAsync();
-                    //viewModel.UserPosts = addPosstsForView;
                     return View();
                 }
             }
@@ -120,15 +109,13 @@ namespace Blog.BLL.Controllers
             }
             return View(viewModel);
         }
-        /*
+        
         [HttpGet]
         public async Task<IActionResult> PostDiscussion(int id)
         {
-            List<Comment> comments = await _context.Comments
-                .Include(u => u.User)
-                .ToListAsync();
-            List<Post> posts = await _context.Posts.Include(u => u.User).ToListAsync();
-            var post = await _context.Posts.Include(t => t.Tegs).FirstOrDefaultAsync(i => i.Id == id);
+            var post = _postRepo.GetPostById(id);
+            List<Teg> tegs = (await _tegRepo.GetAllTegs()).;
+
             PostViewModel pVM = new PostViewModel()
             {
                 Id = id,
@@ -168,7 +155,7 @@ namespace Blog.BLL.Controllers
 
             return RedirectToAction("AllPostsPage", "Blog");
         }
-
+        /*
         [HttpGet]
         public async Task<IActionResult> EditPost(int postId)
         {

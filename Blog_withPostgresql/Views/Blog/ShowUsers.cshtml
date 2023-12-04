@@ -1,6 +1,6 @@
 ﻿@model IEnumerable<Blog.BLL.ViewModels.UsersViewModel>
 @using Blog.BLL.ViewModels;
-@using Blog.BLL.Models;
+
 
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
@@ -8,7 +8,7 @@
     //SignInManager.IsSignedIn();
 
 }
-@if (User.IsInRole("administrator") | User.IsInRole("Administrator"))
+@if (User.IsInRole("administrator") || User.IsInRole("Administrator"))
 {
     <h1>Пользователи</h1>
 

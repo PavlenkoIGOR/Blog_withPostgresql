@@ -1,7 +1,4 @@
-﻿using Blog_withPostgresql.Repositories;
-using Blog.BLL.ViewModel;
-using Blog.BLL.Models;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
@@ -12,6 +9,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Blog.BLL.ViewModels;
 using Microsoft.AspNetCore.Http;
+using Blog_withPostgresql.Repositories;
+using Blog.Data.Models;
 
 namespace Blog_withPostgresql.Controllers
 {
@@ -39,11 +38,19 @@ namespace Blog_withPostgresql.Controllers
         [HttpPost]
         public async Task<IActionResult> RegUser(UserRegViewModel userView)
         {
+            User user = new User() 
+            {
+                    //Id
+                Name = userView.Name,
+                Age = userView.Age,
+                Email = userView.Email,
+                Password = PasswordHash.HashPassword(userView.Password)
+            };
             if (ModelState.IsValid) //необходимо добавить проверку наличия БД и её заполнености
             {
-                int userId = await _userRepo.AddUserAndGetId(userView);
+                int userId = await _userRepo.AddUserAndGetId(user);
                 await Authenticate(userView.Email);
-                User user = _userRepo.GetUserById(userId);
+                user = _userRepo.GetUserById(userId);
 
                 UserBlogViewModel usersBlogModel = new UserBlogViewModel() 
                 {

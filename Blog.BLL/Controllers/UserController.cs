@@ -1,5 +1,5 @@
-﻿using Blog.BLL.Models;
-using Blog.BLL.ViewModels;
+﻿using Blog.BLL.ViewModels;
+using Blog.Data.Models;
 using Blog_withPostgresql.Repositories;
 using Microsoft.AspNetCore.Mvc;
 

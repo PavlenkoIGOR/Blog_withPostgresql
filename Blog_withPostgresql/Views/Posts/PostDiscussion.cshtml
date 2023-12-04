@@ -1,0 +1,66 @@
+﻿@model Blog.BLL.ViewModels.DiscussionPostViewModel
+@using Blog.Data.Models;
+@{
+    ViewData["Title"] = "Ваш Блог";
+}
+<div style="background-color:rgba(0,0,0,0.5); overflow-y: scroll;">
+    <div style="position: relative; background-color: rgba(0,0,0,0.5); color: rgba(57,227,237,1)">
+        <h1>Вы смотрите пост: "@Model.PostVM.Title"</h1>
+        <h3>Автор: @Model.PostVM.AuthorOfPost</h3>
+    </div>
+    @foreach (var teg in Model.PostVM.Tegs)
+    {
+        <div>
+            <h4 style="position: relative; background-color: rgba(0,0,0,0.5); color: rgba(100,100,100,1)">
+                @teg.tegTitle
+            </h4>
+        </div>
+    }
+    <div id="textPost">
+        @Model.PostVM.Text
+    </div>
+    <div>
+    </div>
+    @if (User.Identity.IsAuthenticated == true)
+    {
+        <div style="position:relative;">
+            @using (Html.BeginForm("SetComment", "Posts", new { Id = Model.Id }, FormMethod.Post))
+            {
+                <textarea asp-for="CommentText"></textarea>
+                @Html.HiddenFor(model => model.PostVM.Id)
+                @Html.HiddenFor(model => model.CommentText)
+
+                <button id="SetCommentButton" type="submit">Оставить комментарий</button>
+            }
+        </div>
+    }
+    else
+    {
+        <h3 style="position: relative; background-color: rgba(0,0,0,0.5); color: rgba(100,100,100,1)">только зарегестрированные пользователи могут оставлять комментарии</h3>
+    }
+    <div style="background-color:rgba(0,0,0,0.5);">
+        <span>Комментарии</span>
+    </div>
+    @foreach (var comment in Model.PostVM.CommentsOfPost)
+    {
+        <div style="padding-top:2vh;">
+            <div style="background-color:bisque;">@comment.User.Email</div>
+            <div style="background-color:bisque;">@comment.CommentPublicationTime</div>
+            @* @foreach(var teg in comment.)
+        {
+        <div style="background-color:bisque;">@teg.TegTitle</div>
+        } *@
+            <div style="background-color:whitesmoke;">
+                @comment.CommentText
+            </div>
+            @if (User.IsInRole("Administrator") || User.IsInRole("Moderator"))
+            {
+                <div>
+                    <form method="post" asp-action="" asp-controller="">
+                        <button type="submit">Редактировать</button>
+                    </form>
+                </div>
+            }
+        </div>
+    }
+</div>

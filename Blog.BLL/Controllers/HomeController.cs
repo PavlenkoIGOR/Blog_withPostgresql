@@ -1,8 +1,10 @@
-﻿using Blog.BLL.Models;
+﻿using Blog.BLL;
 using Blog.BLL.ViewModels;
+using Blog.Data;
+using Blog.Data.Models;
 using Blog_withPostgresql.Repositories;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 using System.Security.Claims;
 
@@ -10,13 +12,14 @@ namespace Blog_withPostgresql.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly IMyLogger _logger;
         private readonly IUserRepo _userRepo;
-
-        public HomeController(ILogger<HomeController> logger, IUserRepo userRepo)
+        readonly IWebHostEnvironment _env;
+        public HomeController(IMyLogger logger, IUserRepo userRepo, IWebHostEnvironment env)
         {
             _logger = logger;
             _userRepo = userRepo;
+            _env = env;
         }
 
         [HttpGet]
@@ -36,7 +39,8 @@ namespace Blog_withPostgresql.Controllers
                     UserAge = user.Age,
                     UserName = user.Name
                 };
-                _logger.LogInformation($"пользователь аутентифицирован {DateTime.UtcNow}");
+                _logger.WriteEvent($"Пользователь {blogVM.UserName} аутентифицирован {DateTime.UtcNow}");
+                WriteAction.CreateLogFolder_File(_env, "auth", $"Пользователь {blogVM.UserName} аутентифицирован.");
                 return RedirectToAction("GreetingPage", blogVM);
             }
             else

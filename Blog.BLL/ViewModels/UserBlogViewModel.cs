@@ -1,4 +1,4 @@
-﻿using Blog.BLL.Models;
+﻿using Blog.Data.Models;
 using System.ComponentModel.DataAnnotations;
 namespace Blog.BLL.ViewModels;
 
