@@ -17,8 +17,9 @@ namespace Blog.BLL.Controllers
         IUserRepo _userRepo;
         private readonly ITegRepo _tegRepo;
         IPostsTegsRepo _postsTegsRepo;
+        ICommentRepo _commentRepo;
 
-        public PostsController(IWebHostEnvironment environment, IMyLogger logger, IPostRepo postRepo, IUserRepo userRepo, ITegRepo tegRepo, IPostsTegsRepo postsTegsRepo)
+        public PostsController(IWebHostEnvironment environment, IMyLogger logger, IPostRepo postRepo, IUserRepo userRepo, ITegRepo tegRepo, IPostsTegsRepo postsTegsRepo, ICommentRepo commentRepo)
         {
             _env = environment;
             _logger = logger;
@@ -26,6 +27,7 @@ namespace Blog.BLL.Controllers
             _userRepo = userRepo;
             _tegRepo = tegRepo;
             _postsTegsRepo = postsTegsRepo;
+            _commentRepo = commentRepo;
         }
         
         //[Authorize]
@@ -114,13 +116,17 @@ namespace Blog.BLL.Controllers
         public async Task<IActionResult> PostDiscussion(int id)
         {
             var post = _postRepo.GetPostById(id);
-            List<Teg> tegs = (await _tegRepo.GetAllTegs()).;
+
+            List<Teg> tegs = await _tegRepo.GetAllTegs();
+            List<PostsTegs> postsTegs = await _postsTegsRepo.GetAllFromPostsTegs();
+            List<User> users = await _userRepo.GetAllUsers();
+            List<Comment> comments = (await _commentRepo.GetAllComments()).Where(i => i.PostId == id).ToList();
 
             PostViewModel pVM = new PostViewModel()
             {
                 Id = id,
-                CommentsOfPost = post.Comments,
-                Title = post.Title,
+                CommentsOfPost = comments,
+                Title = post.postTitle,
                 AuthorOfPost = post.User.UserName,
                 Text = post.Text,
                 Tegs = post.Tegs

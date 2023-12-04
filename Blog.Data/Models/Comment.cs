@@ -8,5 +8,5 @@ public class Comment
     public string? CommentText { get; set; }
     public DateTime CommentPublicationTime { get; set; }
     public int PostId { get; set; }
-    public string UserId { get; set; }
+    public int UserId { get; set; }
 }
