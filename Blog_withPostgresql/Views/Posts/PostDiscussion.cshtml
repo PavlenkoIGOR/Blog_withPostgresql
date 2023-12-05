@@ -29,7 +29,7 @@
                 <textarea asp-for="CommentText"></textarea>
                 @Html.HiddenFor(model => model.PostVM.Id)
                 @Html.HiddenFor(model => model.CommentText)
-
+                @Html.HiddenFor(model => model.UserId)
                 <button id="SetCommentButton" type="submit">Оставить комментарий</button>
             }
         </div>
@@ -41,11 +41,11 @@
     <div style="background-color:rgba(0,0,0,0.5);">
         <span>Комментарии</span>
     </div>
-    @foreach (var comment in Model.PostVM.CommentsOfPost)
+    @foreach (var comment in Model.Comments)
     {
         <div style="padding-top:2vh;">
-            <div style="background-color:bisque;">@comment.User.Email</div>
-            <div style="background-color:bisque;">@comment.CommentPublicationTime</div>
+            <div style="background-color:bisque;">@comment.Author</div>
+            <div style="background-color:bisque;">@comment.PublicationDate</div>
             @* @foreach(var teg in comment.)
         {
         <div style="background-color:bisque;">@teg.TegTitle</div>

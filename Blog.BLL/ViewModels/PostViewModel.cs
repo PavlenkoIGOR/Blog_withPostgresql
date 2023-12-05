@@ -14,5 +14,6 @@ public class PostViewModel
 
     public List<Comment> CommentsOfPost { get; set; }
 
-    public List<Teg> Tegs { get; set; }
+    public IEnumerable<Teg> Tegs { get; set; }
+    //public List<Teg> Tegs { get; set; }
 }

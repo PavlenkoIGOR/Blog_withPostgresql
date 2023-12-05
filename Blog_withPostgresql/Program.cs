@@ -19,6 +19,7 @@ namespace Blog_withPostgresql
             builder.Services.AddScoped<IMyLogger, MyLogger>(); //****добавлено для своих репозиториев
             builder.Services.AddScoped<ITegRepo, TegRepo>(); //****добавлено для своих репозиториев
             builder.Services.AddScoped<IPostsTegsRepo, PostsTegsRepo>(); //****добавлено для своих репозиториев
+            builder.Services.AddScoped<ICommentRepo, CommentRepo>(); //****добавлено для своих репозиториев
 
             //
             builder.Services.AddAuthorization();

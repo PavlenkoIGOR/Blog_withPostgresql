@@ -118,21 +118,44 @@ namespace Blog.BLL.Controllers
             var post = _postRepo.GetPostById(id);
 
             List<Teg> tegs = await _tegRepo.GetAllTegs();
+            User user = _userRepo.GetUserById(post.UserId);
             List<PostsTegs> postsTegs = await _postsTegsRepo.GetAllFromPostsTegs();
             List<User> users = await _userRepo.GetAllUsers();
             List<Comment> comments = (await _commentRepo.GetAllComments()).Where(i => i.PostId == id).ToList();
+            IEnumerable<Teg> currentTegs = from pt in postsTegs
+                              join teg in tegs on pt.TegId equals teg.Id
+                              where pt.PostId == id
+                              select teg;
 
-            PostViewModel pVM = new PostViewModel()
+            PostViewModel postVM = new() 
             {
                 Id = id,
-                CommentsOfPost = comments,
                 Title = post.postTitle,
-                AuthorOfPost = post.User.UserName,
-                Text = post.Text,
-                Tegs = post.Tegs
+                Text = post.postText,
+                PublicationDateOfPost = post.PublicationDate,
+                AuthorOfPost = user.Name,
+                UserId = post.UserId,
+                User = user,
+                CommentsOfPost = comments,
+                Tegs = currentTegs
             };
-            CommentViewModel cVM = new CommentViewModel();
-            DiscussionPostViewModel dpVM = new DiscussionPostViewModel { PostVM = pVM, CommentVM = comments };
+            List<CommentViewModel> commentVM = (from comment in comments
+                                                      join u in users on comment.UserId equals u.Id
+                                                      select new CommentViewModel()
+                                                      {
+                                                          CommentVMId = comment.Id,
+                                                          CommentText = comment.CommentText,
+                                                          Author = u.Name,
+                                                          PublicationDate = comment.CommentPublicationTime,
+                                                          PostId = id,
+                                                          UserId = u.Id
+                                                      }).ToList();
+            DiscussionPostViewModel dpVM = new DiscussionPostViewModel()
+            {
+                PostVM = postVM,
+                Comments = commentVM
+            };
+            
             if (dpVM == null)
             {
                 return NotFound();
@@ -143,21 +166,18 @@ namespace Blog.BLL.Controllers
         [HttpPost]
         public async Task<IActionResult> SetComment(DiscussionPostViewModel cVM)
         {
-            var currentUser = HttpContext.User;
-            var userId = currentUser.FindFirstValue(ClaimTypes.NameIdentifier); //представляет идентификатор пользователя.
-
-            //var comment = _context.Comments.Where(d => d.PostId == discussionPVM.Id).Select(d=>d).FirstOrDefaultAsync();
+            var userByEmail = _userRepo.GetUserByEmail(User.Identity.Name);
+            
             Comment comment = new Comment()
             {
-                UserId = userId!,
+                UserId = userByEmail.Id,
                 CommentText = cVM.CommentText,
                 PostId = cVM.PostVM.Id,
+                
                 CommentPublicationTime = DateTime.UtcNow
             };
 
-            await _context.Comments.AddAsync(comment);
-            await _context.SaveChangesAsync();
-
+            await _commentRepo.AddComment(comment);
 
             return RedirectToAction("AllPostsPage", "Blog");
         }

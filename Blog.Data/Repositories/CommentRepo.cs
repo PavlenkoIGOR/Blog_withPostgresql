@@ -34,8 +34,8 @@ public class CommentRepo : ICommentRepo
                 command.CommandText = "INSERT INTO comments (comment_text, comment_publicationdate, post_id, user_id) VALUES (@comment_text, @comment_publicationdate, @post_id, @user_id) RETURNING id";
                 command.Parameters.AddWithValue("@comment_text", comment.CommentText);
                 command.Parameters.AddWithValue("@comment_publicationdate", comment.CommentPublicationTime);
-                command.Parameters.AddWithValue("@post_id", comment.UserId);
-                command.Parameters.AddWithValue("@user_id", comment.PostId);
+                command.Parameters.AddWithValue("@post_id", comment.PostId);
+                command.Parameters.AddWithValue("@user_id", comment.UserId);
                 //await command.ExecuteNonQueryAsync();
                 postId = (int)(await command.ExecuteScalarAsync()); // Получаем id нового поста
             }

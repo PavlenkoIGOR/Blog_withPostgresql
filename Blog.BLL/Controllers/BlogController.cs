@@ -54,7 +54,7 @@ namespace Blog_withPostgresql.Controllers
 
         #region ShowUsers Настроено!
 
-        [Authorize(Roles = "administrator")] //так авторизация работает только для пользователей у которых  Role == "admin".
+        [Authorize(Roles = "Administrator")] //так авторизация работает только для пользователей у которых  Role == "Administrator".
         [HttpGet]
         public async Task<IActionResult> ShowUsers()
         {
