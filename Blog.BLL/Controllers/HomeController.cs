@@ -10,6 +10,7 @@ using System.Security.Claims;
 
 namespace Blog_withPostgresql.Controllers
 {
+    //[ApiController]
     public class HomeController : Controller
     {
         private readonly IMyLogger _logger;
@@ -23,6 +24,7 @@ namespace Blog_withPostgresql.Controllers
         }
 
         [HttpGet]
+        //[Route("Index")]
         public IActionResult Index()
         {
             if (HttpContext.User.Identity.IsAuthenticated)
@@ -49,17 +51,20 @@ namespace Blog_withPostgresql.Controllers
             }
         }
 
+        //[Route("GreetingPage")]
         [HttpGet]
         public IActionResult GreetingPage(UserBlogViewModel ubVM)
         {
             return View(ubVM);
         }
 
+        //[Route("Privacy")]
         public IActionResult Privacy()
         {
             return View();
         }
 
+        //[Route("Error")]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

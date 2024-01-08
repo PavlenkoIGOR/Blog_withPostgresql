@@ -1,16 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Authentication;
-using System.Text;
-using System.IdentityModel.Tokens.Jwt;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Blog.BLL.ViewModels;
-using Microsoft.AspNetCore.Http;
-using Blog_withPostgresql.Repositories;
+﻿using Blog.BLL.ViewModels;
 using Blog.Data.Models;
+using Blog_withPostgresql.Repositories;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using System.Security.Claims;
 
 namespace Blog_withPostgresql.Controllers
 {
@@ -20,7 +17,6 @@ namespace Blog_withPostgresql.Controllers
     {
         IUserRepo _userRepo;
         private readonly ILogger<AuthRegController> _logger;
-
 
         public AuthRegController(IUserRepo userRepo, ILogger<AuthRegController> logger)
         {
@@ -106,25 +102,8 @@ namespace Blog_withPostgresql.Controllers
                     };
                     await Authenticate(userE.Email); // аутентификация
 
-                    //var claims = new List<Claim>()
-                    //{
-                    //    new Claim(ClaimsIdentity.DefaultNameClaimType, blogVM.UserName),
-                    //    new Claim(ClaimsIdentity.DefaultRoleClaimType, blogVM.Role)
-                    //};
-                    //// создаем объект ClaimsIdentity
-                    //ClaimsIdentity claimId = new ClaimsIdentity
-                    //    (
-                    //    claims,
-                    //    "BlogApplication_Cookie",
-                    //    ClaimsIdentity.DefaultNameClaimType,
-                    //    ClaimsIdentity.DefaultRoleClaimType
-                    //    );
-                    ////_logger.LogInformation("Nen fdsfds {@user}", blogVM);
-                    ////var cl = GenerationTokenStation(blogVM.UserId);
-                    //// установка аутентификационных куки
-                    //await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimId));
-                    ////await HttpContext.SignInAsync("BlogApplication_Cookie", new ClaimsPrincipal(id));
-                    return RedirectToAction("GreetingPage", "Home", blogVM);
+                    string userEmailRoute = Request.Query["userEmail"].ToString();
+                return RedirectToAction("GreetingPage", "Home", blogVM);
                 
             }
             else
@@ -140,25 +119,6 @@ namespace Blog_withPostgresql.Controllers
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Index", "Home");
         }
-
-
-
-
-        public string GenerationTokenStation(int userId)
-        {
-            var key = "Тут ключ для подписи";
-
-            var claims = new List<Claim> { new Claim("UserId", userId.ToString()) };
-            var jwt = new JwtSecurityToken(
-                    issuer: "Кто выдал токен",
-                    audience: "Для кого выдан",
-                    claims: claims,
-                    expires: DateTime.UtcNow.AddSeconds(60),
-                    signingCredentials: new SigningCredentials(new SymmetricSecurityKey(Encoding.ASCII.GetBytes(key)), SecurityAlgorithms.HmacSha256));
-
-            var tokenHandler = new JwtSecurityTokenHandler().WriteToken(jwt);
-            return tokenHandler.ToString();
-        }
         #endregion
 
         //[Authorize]
@@ -169,11 +129,6 @@ namespace Blog_withPostgresql.Controllers
             return View();
         }
 
-
-
-
-
-
         private async Task Authenticate(string userMail)
         {
             User user = _userRepo.GetUserByEmail(userMail);
@@ -183,8 +138,9 @@ namespace Blog_withPostgresql.Controllers
                 new Claim(ClaimTypes.Name, user.Email),
                 new Claim(ClaimTypes.Role, user.Role),
             };
+
             // создаем объект ClaimsIdentity
-            ClaimsIdentity id = new ClaimsIdentity(claims, "BlogApplication_Cookie", ClaimTypes.Name, ClaimTypes.Role);
+            ClaimsIdentity id = new ClaimsIdentity(claims, "Cookies", ClaimTypes.Name, ClaimTypes.Role);
             // установка аутентификационных куки
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(id));
         }

@@ -3,78 +3,79 @@ using Blog.Data.Models;
 using Blog_withPostgresql.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Blog.BLL.Controllers
+namespace Blog.BLL.Controllers;
+
+public class UserController : Controller
 {
-    public class UserController : Controller
+    private IUserRepo _userRepo;
+
+    public UserController(IUserRepo userRepo)
     {
-        private IUserRepo _userRepo;
+        _userRepo = userRepo;
+    }
 
-        public UserController(IUserRepo userRepo)
+    [HttpGet]
+    public async Task<IActionResult> EditUserPage(int id)
+    {
+        User user = _userRepo.GetUserById(id);
+
+
+        if (user == null)
         {
-            _userRepo = userRepo;
+            return StatusCode(404);
         }
-        [HttpGet]
-        public async Task<IActionResult> EditUserPage(int id)
+        UsersViewModel viewModel = new UsersViewModel();
+        viewModel.Id = id;
+        viewModel.Email = user.Email;
+        viewModel.Name = user.Name;
+        viewModel.Age = user.Age;
+        viewModel.RoleType = user.Role;
+        return View(viewModel);
+    }
+
+    [HttpPost]
+    [Route("EditUserByAdmin")]
+    public async Task<IActionResult> EditUserByAdmin(UsersViewModel usersVM)
+    {
+        string userRole = String.Empty;
+        foreach (RolesViewModel role in Enum.GetValues(typeof(RolesViewModel)))
         {
-            User user = _userRepo.GetUserById(id);
-
-
+            if (role.GetHashCode() == Convert.ToInt32(usersVM.RoleType))
+            {
+                // Найдено соответствующее значение по хэш-коду
+                Console.WriteLine("Найдено значение: " + role.ToString());
+                userRole = role.ToString();
+            }
+        }
+        if (ModelState.IsValid)
+        {
+            UsersViewModel uVM = new UsersViewModel();
+            User user = _userRepo.GetUserById(usersVM.Id);
             if (user == null)
             {
-                return StatusCode(404);
+                return BadRequest("Пользователь не найден!");
             }
-            UsersViewModel viewModel = new UsersViewModel();
-            viewModel.Id = id;
-            viewModel.Email = user.Email;
-            viewModel.Name = user.Name;
-            viewModel.Age = user.Age;
-            viewModel.RoleType = user.Role;
-            return View(viewModel);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> EditUserByAdmin(UsersViewModel usersVM)
-        {
-            string userRole = String.Empty;
-            foreach (RolesViewModel role in Enum.GetValues(typeof(RolesViewModel)))
+            else
             {
-                if (role.GetHashCode() == Convert.ToInt32(usersVM.RoleType))
-                {
-                    // Найдено соответствующее значение по хэш-коду
-                    Console.WriteLine("Найдено значение: " + role.ToString());
-                    userRole = role.ToString();
-                }
+                user.Id = usersVM.Id;
+                uVM.Id = usersVM.Id;
+                uVM.Email = user.Email;
+                uVM.Name = user.Name;
+                uVM.Age = usersVM.Age;
+                uVM.RoleType = userRole;
+
+                user.Age = usersVM.Age;
+                user.Id = usersVM.Id;
+                user.Email = usersVM.Email;
+                user.Name = usersVM.Name;
+                user.Role = userRole;
+
+                await _userRepo.EditUser(user);
+
             }
-            if (ModelState.IsValid)
-            {
-                UsersViewModel uVM = new UsersViewModel();
-                User user = _userRepo.GetUserById(usersVM.Id);
-                if (user == null)
-                {
-                    return BadRequest("Пользователь не найден!");
-                }
-                else
-                {
-                    user.Id = usersVM.Id;
-                    uVM.Id = usersVM.Id;
-                    uVM.Email = user.Email;
-                    uVM.Name = user.Name;
-                    uVM.Age = usersVM.Age;
-                    uVM.RoleType = userRole;
 
-                    user.Age = usersVM.Age;
-                    user.Id = usersVM.Id;
-                    user.Email = usersVM.Email;
-                    user.Name = usersVM.Name;
-                    user.Role = userRole;
-
-                    await _userRepo.EditUser(user);
-
-                }
-
-                return View("EditUserPage", uVM);
-            }
-            return BadRequest("Пользователь не найден!");
+            return View("EditUserPage", uVM);
         }
+        return BadRequest("Пользователь не найден!");
     }
 }

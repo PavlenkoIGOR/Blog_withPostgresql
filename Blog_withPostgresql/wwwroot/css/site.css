@@ -21,7 +21,7 @@ body {
   margin-bottom: 60px;
 }
 form{
-    /*display: inline-grid;*/
+    display: inline-grid;
     width: 100%;
 }
 #registerFormDiv {
@@ -66,4 +66,8 @@ form{
     height: 100px;
     width: 100%;
     background-color: bisque;
+}
+
+#textBlock {
+    font-family: Snell Roundhand, cursive;
 }

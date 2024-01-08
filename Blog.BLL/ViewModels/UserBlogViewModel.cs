@@ -13,7 +13,7 @@ public class UserBlogViewModel
     public string UserName { get; set; }
     public string Role { get; set;}
     [DataType(DataType.MultilineText)]
-    [Required]
+    [Required(ErrorMessage = "Поле c текстом является обязательным")]
     public string Text { get; set; }
     public DateTime PublicationDate { get; set; }
     [Required(ErrorMessage = "Поле tegs является обязательным")]
@@ -33,7 +33,7 @@ public class UserBlogViewModel
         {
             char[] delimiters = new char[] { '\r', '\n', ',', ' ' };
 
-            var words = tegs.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
+            string[] words = tegs.Split(delimiters, StringSplitOptions.RemoveEmptyEntries);
             foreach (string teg in words)
             {
                 Teg teg1 = new Teg();
