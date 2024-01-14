@@ -1,3 +1,7 @@
+1. База данных PostgreSQL;
+2. Взаимеодействие с БД через SQL-команды;
+3. Авторизацич через Cookies;
+
 ```sql
 /*
 create table users
